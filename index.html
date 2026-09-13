@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Sensor Principle Simulation</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --accent: #38bdf8;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-bottom: 6px;
+            font-size: 1.8rem;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            margin-top: 0;
+            margin-bottom: 24px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 20px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        .panel {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .panel h2 {
+            font-size: 1.2rem;
+            margin-top: 0;
+            border-bottom: 2px solid #334155;
+            padding-bottom: 8px;
+            width: 100%;
+            text-align: center;
+        }
+
+        /* Target Object */
+        .color-preview {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            margin: 16px 0;
+            box-shadow: 0 0 20px rgba(255,255,255,0.15);
+            transition: background-color 0.2s ease;
+        }
+
+        .controls {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .preset-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        button {
+            background: #334155;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* Sensor Hardware */
+        .sensor-chip {
+            background: #020617;
+            border: 2px solid #475569;
+            border-radius: 10px;
+            padding: 16px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 10px 0;
+        }
+
+        .channel {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .channel-label {
+            width: 60px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .meter-bg {
+            flex-grow: 1;
+            height: 24px;
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        #redMeter { background: #ef4444; }
+        #greenMeter { background: #22c55e; }
+        #blueMeter { background: #3b82f6; }
+        #clearMeter { background: #f8fafc; }
+
+        .meter-value {
+            width: 35px;
+            text-align: right;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        /* Result Panel */
+        .result-box {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            border: 2px dashed #94a3b8;
+            margin: 16px 0;
+            transition: background-color 0.2s ease;
+        }
+
+        .output-data {
+            background: #020617;
+            padding: 12px;
+            border-radius: 8px;
+            width: 90%;
+            font-family: monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .explanation {
+            max-width: 1100px;
+            margin-top: 24px;
+            background: #1e293b;
+            padding: 16px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            border-left: 4px solid var(--accent);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>How a Color Sensor Works</h1>
+    <p class="subtitle">Interactive demonstration for optical reflection & photodiode filtering</p>
+
+    <div class="container">
+        <!-- 1. Target Object -->
+        <div class="panel">
+            <h2>1. Surface Under Test</h2>
+            <div id="targetColor" class="color-preview" style="background-color: #e11d48;"></div>
+            
+            <div class="controls">
+                <label>Pick custom color: 
+                    <input type="color" id="picker" value="#e11d48" style="vertical-align: middle; cursor: pointer;">
+                </label>
+                
+                <div style="font-size: 0.85rem; color: #94a3b8;">Quick presets for presentation:</div>
+                <div class="preset-buttons">
+                    <button onclick="setColor(225, 29, 72)">Red Apple</button>
+                    <button onclick="setColor(34, 197, 94)">Leaf Green</button>
+                    <button onclick="setColor(59, 130, 246)">Blueberry</button>
+                    <button onclick="setColor(234, 179, 8)">Banana Yellow</button>
+                    <button onclick="setColor(240, 240, 240)">White Paper</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Inside the Sensor -->
+        <div class="panel">
+            <h2>2. Optical Filters & Photodiodes</h2>
+            <p style="font-size: 0.85rem; color: #94a3b8; text-align: center; margin: 0 0 10px 0;">
+                White LED bounces light off object. Bandpass filters separate wavelengths:
+            </p>
+
+            <div class="sensor-chip">
+                <!-- Red Channel -->
+                <div class="channel">
+                    <span class="channel-label" style="color: #ef4444;">RED</span>
+                    <div class="meter-bg">
+                        <div id="redMeter" class="meter-fill"></div>
+                    </div>
+                    <span id="redVal" class="meter-value">0</span>
+                </div>
+
+                <!-- Green Channel -->
+                <div class="channel">
+                    <span class="channel-label" style="color: #22c55e;">GREEN</span>
+                    <div class="meter-bg">
+                        <div id="greenMeter" class="meter-fill"></div>
+                    </div>
+                    <span id="greenVal" class="meter-value">0</span>
+                </div>
+
+                <!-- Blue Channel -->
+                <div class="channel">
+                    <span class="channel-label" style="color: #38bdf8;">BLUE</span>
+                    <div class="meter-bg">
+                        <div id="blueMeter" class="meter-fill"></div>
+                    </div>
+                    <span id="blueVal" class="meter-value">0</span>
+                </div>
+
+                <!-- Clear Channel (Total Intensity) -->
+                <div class="channel">
+                    <span class="channel-label" style="color: #cbd5e1;">CLEAR</span>
+                    <div class="meter-bg">
+                        <div id="clearMeter" class="meter-fill"></div>
+                    </div>
+                    <span id="clearVal" class="meter-value">0</span>
+                </div>
+            </div>
+            
+            <div style="font-size: 0.8rem; color: #64748b; text-align: center;">
+                *Clear channel measures overall ambient/reflected brightness
+            </div>
+        </div>
+
+        <!-- 3. Sensor Output -->
+        <div class="panel">
+            <h2>3. Microcontroller Output</h2>
+            <div id="detectedColor" class="result-box"></div>
+            
+            <div class="output-data">
+                <div><b>ADC Readings (8-bit):</b></div>
+                <div>R: <span id="outR">0</span></div>
+                <div>G: <span id="outG">0</span></div>
+                <div>B: <span id="outB">0</span></div>
+                <hr style="border: 0; border-top: 1px solid #334155; margin: 8px 0;">
+                <div><b>HEX:</b> <span id="outHex">#000000</span></div>
+                <div><b>Identified:</b> <span id="outName" style="color: var(--accent); font-weight: bold;">-</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Presentation Talking Points Box -->
+    <!---div class="explanation">
+        <b>Presentation Cue:</b> Notice what happens when you select <i>Banana Yellow</i>. Yellow light is a combination of Red and Green wavelengths. Both the Red and Green photodiodes register high numbers, while Blue is low. The microcontroller combines these values back together to determine that the surface is Yellow!
+    </div-->
+
+    <script>
+        const picker = document.getElementById('picker');
+        const targetColor = document.getElementById('targetColor');
+        const detectedColor = document.getElementById('detectedColor');
+
+        function hexToRgb(hex) {
+            let c = hex.replace('#', '');
+            if (c.length === 3) c = c.split('').map(x => x + x).join('');
+            const num = parseInt(c, 16);
+            return {
+                r: (num >> 16) & 255,
+                g: (num >> 8) & 255,
+                b: num & 255
+            };
+        }
+
+        function rgbToHex(r, g, b) {
+            return "#" + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('').toUpperCase();
+        }
+
+        function guessColorName(r, g, b) {
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            if (max < 40) return "Black / Very Dark";
+            if (min > 210) return "White / High Reflective";
+            if (max - min < 25) return "Gray / Neutral";
+
+            if (r > 180 && g > 160 && b < 100) return "Yellow";
+            if (r > 180 && g < 100 && b > 140) return "Magenta / Pink";
+            if (r < 100 && g > 150 && b > 150) return "Cyan";
+            if (r >= g && r >= b) return "Red Dominant";
+            if (g >= r && g >= b) return "Green Dominant";
+            return "Blue Dominant";
+        }
+
+        function updateSimulation(r, g, b) {
+            // 1. Update Target Object Visual
+            const hex = rgbToHex(r, g, b);
+            targetColor.style.backgroundColor = hex;
+            picker.value = hex;
+
+            // 2. Photodiode Sensor Simulation (Simulate ADC 0-255)
+            // Clear channel measures sum total intensity
+            const clear = Math.min(255, Math.round((r + g + b) / 3));
+
+            document.getElementById('redMeter').style.width = (r / 255 * 100) + '%';
+            document.getElementById('greenMeter').style.width = (g / 255 * 100) + '%';
+            document.getElementById('blueMeter').style.width = (b / 255 * 100) + '%';
+            document.getElementById('clearMeter').style.width = (clear / 255 * 100) + '%';
+
+            document.getElementById('redVal').innerText = r;
+            document.getElementById('greenVal').innerText = g;
+            document.getElementById('blueVal').innerText = b;
+            document.getElementById('clearVal').innerText = clear;
+
+            // 3. Digital Output Reconstruction
+            detectedColor.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+            document.getElementById('outR').innerText = r;
+            document.getElementById('outG').innerText = g;
+            document.getElementById('outB').innerText = b;
+            document.getElementById('outHex').innerText = hex;
+            document.getElementById('outName').innerText = guessColorName(r, g, b);
+        }
+
+        function setColor(r, g, b) {
+            updateSimulation(r, g, b);
+        }
+
+        picker.addEventListener('input', (e) => {
+            const rgb = hexToRgb(e.target.value);
+            updateSimulation(rgb.r, rgb.g, rgb.b);
+        });
+
+        // Initialize
+        updateSimulation(225, 29, 72);
+    </script>
+</body>
+</html>
