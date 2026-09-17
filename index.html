@@ -185,11 +185,14 @@
             color: #cbd5e1;
             border-left: 4px solid var(--accent);
         }
-        @media (max-width: 900px) {
-        .container {
-        grid-template-columns: 1fr;
-    }
-}
+
+        .footer {
+            margin-top: auto;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -290,6 +293,9 @@
     <!---div class="explanation">
         <b>Presentation Cue:</b> Notice what happens when you select <i>Banana Yellow</i>. Yellow light is a combination of Red and Green wavelengths. Both the Red and Green photodiodes register high numbers, while Blue is low. The microcontroller combines these values back together to determine that the surface is Yellow!
     </div-->
+    <div>
+        <a href="./rgbVisualization.html"> Color matrix visualization</a>
+    </div>
 
     <script>
         const picker = document.getElementById('picker');
@@ -367,5 +373,8 @@
         // Initialize
         updateSimulation(225, 29, 72);
     </script>
+    <div class="footer">
+        Prompted by Filippo Michelini
+    </div>
 </body>
 </html>
