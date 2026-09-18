@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <title>RGB Vector Space — Interactive 3D Explorer</title>
 <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 <script type="importmap">
@@ -16,143 +16,141 @@
 <style>
   html, body { height: 100%; }
   body {
-    margin: 0;
-    overflow: hidden;
+    margin: 0; overflow: hidden; color: #dbe3f4;
     font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color: #dbe3f4;
     background:
-      radial-gradient(1100px 800px at 18% 8%, #1a2135 0%, rgba(10,12,20,0) 60%),
-      radial-gradient(900px 700px at 90% 90%, #201830 0%, rgba(10,12,20,0) 55%),
+      radial-gradient(1100px 800px at 15% 5%, #1b2338 0%, rgba(10,12,20,0) 58%),
+      radial-gradient(1000px 800px at 95% 95%, #241a38 0%, rgba(10,12,20,0) 55%),
       #06070c;
   }
   #scene { position: fixed; inset: 0; width: 100%; height: 100%; display: block; touch-action: none; }
 
   .glass {
-    background: rgba(13, 16, 26, 0.72);
+    background: rgba(12, 15, 24, 0.74);
     border: 1px solid rgba(255,255,255,0.09);
-    backdrop-filter: blur(16px) saturate(140%);
-    -webkit-backdrop-filter: blur(16px) saturate(140%);
-    box-shadow: 0 18px 50px -18px rgba(0,0,0,0.9);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: 0 20px 55px -20px rgba(0,0,0,0.95);
   }
-  .scroll::-webkit-scrollbar { width: 8px; }
+  .scroll::-webkit-scrollbar { width: 7px; height: 7px; }
   .scroll::-webkit-scrollbar-track { background: transparent; }
   .scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.16); border-radius: 99px; }
-  .scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
+  .scroll::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
 
-  input[type=range] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 12px; border-radius: 999px;
-    outline: none; cursor: pointer;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
-  }
-  input[type=range]::-webkit-slider-thumb {
-    -webkit-appearance: none; appearance: none;
-    width: 20px; height: 20px; border-radius: 50%;
-    background: #fff; border: 3px solid #0a0c14;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.4), 0 3px 8px rgba(0,0,0,0.7);
-    cursor: grab;
-  }
-  input[type=range]::-moz-range-thumb {
-    width: 15px; height: 15px; border-radius: 50%;
-    background: #fff; border: 3px solid #0a0c14;
-    box-shadow: 0 0 0 1px rgba(255,255,255,0.4); cursor: grab;
-  }
-  input[type=color] {
-    -webkit-appearance: none; appearance: none;
-    width: 100%; height: 40px; padding: 0; border: none; background: transparent; cursor: pointer;
-  }
-  input[type=color]::-webkit-color-swatch-wrapper { padding: 0; }
-  input[type=color]::-webkit-color-swatch { border: 1px solid rgba(255,255,255,0.25); border-radius: 10px; }
+  input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:12px; border-radius:999px;
+    outline:none; cursor:pointer; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); }
+  input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; appearance:none; width:19px; height:19px;
+    border-radius:50%; background:#fff; border:3px solid #0a0c14;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.45), 0 3px 9px rgba(0,0,0,0.75); }
+  input[type=range]::-moz-range-thumb { width:14px; height:14px; border-radius:50%; background:#fff; border:3px solid #0a0c14; }
+  input[type=number] { -moz-appearance:textfield; }
+  input[type=number]::-webkit-inner-spin-button { display:none; }
+  input[type=color] { -webkit-appearance:none; appearance:none; width:100%; height:100%; padding:0; border:none; background:transparent; cursor:pointer; }
+  input[type=color]::-webkit-color-swatch-wrapper { padding:0; }
+  input[type=color]::-webkit-color-swatch { border:1px solid rgba(255,255,255,0.25); border-radius:8px; }
 
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-    padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight: 600;
-    color: #dbe3f4; background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
-    transition: background .15s, border-color .15s, transform .1s; cursor: pointer;
-    user-select: none; white-space: nowrap;
-  }
-          .footer {
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:6px 11px; border-radius:9px;
+    font-size:11.5px; font-weight:600; color:#d7dff2; background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12); cursor:pointer; user-select:none; white-space:nowrap;
+    transition: background .15s, border-color .15s, transform .08s; }
+    .footer {
             margin-top: auto;
             padding: 20px;
             color: #94a3b8;
             font-size: 0.9rem;
             text-align: center;
         }
-  .btn:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.24); }
+  .btn:hover { background:rgba(255,255,255,0.13); border-color:rgba(255,255,255,0.24); }
   .btn:active { transform: translateY(1px); }
-  .btn.on { background: rgba(99,102,241,0.28); border-color: rgba(129,140,248,0.7); color: #eef1ff; }
-  .btn.primary { background: linear-gradient(180deg,#6366f1,#4f46e5); border-color: #6366f1; color:#fff; }
-  .btn.primary:hover { filter: brightness(1.12); }
-
+  .btn.on { background:rgba(99,102,241,0.3); border-color:rgba(129,140,248,0.75); color:#eef1ff; }
+  .btn.primary { background:linear-gradient(180deg,#6366f1,#4f46e5); border-color:#6366f1; color:#fff; }
+  .btn.primary:hover { filter:brightness(1.13); }
+  .sec-title { font-size:9.5px; letter-spacing:.15em; text-transform:uppercase; color:#8794b3; font-weight:800; }
+  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
   .kpi { font-variant-numeric: tabular-nums; }
   .swatch { box-shadow: inset 0 0 0 1px rgba(255,255,255,0.22); }
-  .row { display:flex; align-items:center; gap:8px; padding:6px 8px; border-radius:10px; cursor:pointer; transition: background .15s; }
-  .row:hover { background: rgba(255,255,255,0.06); }
-  .row.sel { background: rgba(129,140,248,0.18); box-shadow: inset 0 0 0 1px rgba(129,140,248,0.55); }
-  .sec-title { font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: #8794b3; font-weight: 700; }
-  .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-  .preset { width: 26px; height: 26px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(255,255,255,0.2); transition: transform .12s; }
-  .preset:hover { transform: scale(1.14); }
-  #helpBody { transition: max-height .25s ease, opacity .2s ease; }
+  .row { display:flex; align-items:center; gap:7px; padding:5px 7px; border-radius:9px; cursor:pointer; transition:background .15s; }
+  .row:hover { background:rgba(255,255,255,0.07); }
+  .row.sel { background:rgba(129,140,248,0.2); box-shadow: inset 0 0 0 1px rgba(129,140,248,0.6); }
+  .preset { width:22px; height:22px; border-radius:7px; cursor:pointer; border:1px solid rgba(255,255,255,0.2); transition:transform .12s; }
+  .preset:hover { transform:scale(1.16); }
+  .dot { width:7px; height:7px; border-radius:99px; background:rgba(255,255,255,0.22); transition:all .2s; cursor:pointer; }
+  .dot.on { background:#818cf8; width:20px; }
+  .chip { font-size:10px; padding:2px 7px; border-radius:99px; border:1px solid rgba(255,255,255,0.14); color:#a9b6d1; }
+  #lessonBody p { margin:0; }
+  .fade-in { animation: fi .35s ease both; }
+  @keyframes fi { from { opacity:0; transform: translateY(4px);} to { opacity:1; transform:none;} }
 </style>
 </head>
 <body>
 <canvas id="scene"></canvas>
 
-<!-- Title -->
-<div class="pointer-events-none fixed top-4 left-4 z-20 select-none">
-  <h1 class="text-[19px] font-bold tracking-tight text-white/95">RGB Vector Space</h1>
-  <p class="text-[12px] text-slate-400 max-w-[280px] leading-snug">Every color is a <span class="text-slate-200 font-semibold">vector</span> from black to a point in the unit cube. Drag to orbit · scroll to zoom.</p>
-</div>
-
-<!-- Help / legend -->
-<div class="hidden md:block fixed bottom-4 left-4 z-20 w-[290px] glass rounded-2xl overflow-hidden">
-  <button id="helpToggle" class="w-full flex items-center justify-between px-4 py-3 text-left">
-    <span class="text-[12px] font-semibold text-slate-200">What am I looking at?</span>
-    <span id="helpCaret" class="text-slate-400 text-[11px]">hide</span>
-  </button>
-  <div id="helpBody" class="px-4 pb-3.5 -mt-1 text-[11.5px] leading-relaxed text-slate-400 space-y-1.5">
-    <p><span class="text-red-400 font-semibold">Direction</span> = hue / which channels dominate.</p>
-    <p><span class="text-emerald-400 font-semibold">Length</span> = intensity (0 = black, 441 = white).</p>
-    <p><span class="text-sky-400 font-semibold">Components</span> = the R, G, B edges of the dashed box.</p>
-    <p><span class="text-amber-300 font-semibold">Gray diagonal</span> = pure luminance; distance from it = saturation.</p>
-    <p><span class="text-violet-300 font-semibold">Angle</span> between two saved vectors = how different their hues are.</p>
+<!-- ================= LESSON CARD ================= -->
+<div id="lessonCard" class="fixed z-30 top-3 left-3 right-3 sm:right-auto sm:w-[336px] glass rounded-2xl overflow-hidden">
+  <div class="flex items-center justify-between px-3.5 pt-3">
+    <div class="flex items-center gap-2">
+      <span class="text-[9.5px] font-extrabold tracking-[.15em] uppercase text-indigo-300">Guided tour</span>
+      <span class="chip" id="stepNum">1 / 8</span>
+    </div>
+    <button id="lessonToggle" class="text-[10.5px] text-slate-400 hover:text-slate-200">hide</button>
+  </div>
+  <div id="lessonBody" class="px-3.5 pb-3 pt-2">
+    <h2 id="lessonTitle" class="text-[15px] font-bold text-white leading-tight mb-1.5">Every pixel is a vector</h2>
+    <p id="lessonText" class="text-[12px] leading-relaxed text-slate-300"></p>
+    <div id="lessonHint" class="mt-2 text-[11px] leading-snug text-indigo-200/90 bg-indigo-400/10 border border-indigo-400/25 rounded-lg px-2.5 py-1.5"></div>
+  </div>
+  <div class="flex items-center justify-between gap-3 px-3.5 pb-3">
+    <div id="dots" class="flex items-center gap-1.5"></div>
+    <div class="flex gap-1.5">
+      <button id="prevBtn" class="btn">← Prev</button>
+      <button id="nextBtn" class="btn primary">Next →</button>
+    </div>
   </div>
 </div>
 
-<!-- Control panel -->
-<div id="panel" class="fixed z-20 inset-x-0 bottom-0 md:inset-x-auto md:right-4 md:top-4 md:bottom-4 w-full md:w-[348px]
-     glass md:rounded-2xl rounded-t-2xl max-h-[62vh] md:max-h-[calc(100vh-2rem)] overflow-y-auto scroll">
+<!-- ================= VIEW BAR (bottom left) ================= -->
+<div class="fixed z-20 bottom-3 left-3 flex flex-wrap items-center gap-1.5 max-w-[calc(100vw-1.5rem)]">
+  <div class="glass rounded-xl px-2 py-1.5 flex items-center gap-1">
+    <span class="text-[9.5px] font-extrabold tracking-[.12em] uppercase text-slate-400 pl-1 pr-1">View</span>
+    <button class="btn on" data-view="iso">Iso</button>
+    <button class="btn" data-view="r">R</button>
+    <button class="btn" data-view="g">G</button>
+    <button class="btn" data-view="b">B</button>
+    <button class="btn" data-view="gray">Gray</button>
+  </div>
+  <div class="glass rounded-xl px-2 py-1.5 flex items-center gap-1">
+    <span class="text-[9.5px] font-extrabold tracking-[.12em] uppercase text-slate-400 px-1">Spin</span>
+    <button id="spinBtn" class="btn w-[52px]">off</button>
+  </div>
+</div>
 
-  <div class="p-4 space-y-5">
+<!-- ================= CONTROL PANEL ================= -->
+<div id="panel" class="fixed z-20 inset-x-0 bottom-0 md:inset-x-auto md:right-3 md:top-3 md:bottom-3 w-full md:w-[344px]
+     glass rounded-t-2xl md:rounded-2xl max-h-[58vh] md:max-h-[calc(100vh-1.5rem)] overflow-y-auto scroll">
 
-    <!-- Active vector sliders -->
+  <div class="p-3.5 space-y-4">
+
+    <!-- active vector -->
     <section>
       <div class="flex items-center justify-between mb-2">
         <span class="sec-title">Active vector</span>
-        <span id="hexLabel" class="mono text-[11px] text-slate-300">#C8785A</span>
+        <span id="hexLabel" class="mono text-[11px] text-slate-200">#C8785A</span>
       </div>
-
-      <div class="flex gap-3 mb-3">
-        <div id="swatch" class="swatch w-16 h-16 rounded-xl shrink-0" style="background:#c8785a"></div>
-        <div class="flex-1 grid grid-cols-[18px_1fr_38px] items-center gap-x-2 gap-y-2">
-          <span class="text-[12px] font-bold text-red-400">R</span>
+      <div class="flex gap-2.5 mb-2.5">
+        <div id="swatch" class="swatch w-14 h-14 rounded-xl shrink-0" style="background:#c8785a"></div>
+        <div class="flex-1 grid grid-cols-[14px_1fr_36px] items-center gap-x-1.5 gap-y-1.5">
+          <span class="text-[11.5px] font-extrabold text-red-400">R</span>
           <input id="rSlider" type="range" min="0" max="255" value="200" />
-          <input id="rNum" type="number" min="0" max="255" value="200"
-                 class="mono text-[11px] bg-black/30 border border-white/10 rounded-md px-1 py-1 text-center w-full outline-none focus:border-indigo-400" />
-          <span class="text-[12px] font-bold text-green-400">G</span>
+          <input id="rNum" type="number" min="0" max="255" value="200" class="mono text-[11px] bg-black/35 border border-white/10 rounded-md py-1 text-center w-full outline-none focus:border-indigo-400" />
+          <span class="text-[11.5px] font-extrabold text-green-400">G</span>
           <input id="gSlider" type="range" min="0" max="255" value="120" />
-          <input id="gNum" type="number" min="0" max="255" value="120"
-                 class="mono text-[11px] bg-black/30 border border-white/10 rounded-md px-1 py-1 text-center w-full outline-none focus:border-indigo-400" />
-          <span class="text-[12px] font-bold text-blue-400">B</span>
+          <input id="gNum" type="number" min="0" max="255" value="120" class="mono text-[11px] bg-black/35 border border-white/10 rounded-md py-1 text-center w-full outline-none focus:border-indigo-400" />
+          <span class="text-[11.5px] font-extrabold text-blue-400">B</span>
           <input id="bSlider" type="range" min="0" max="255" value="90" />
-          <input id="bNum" type="number" min="0" max="255" value="90"
-                 class="mono text-[11px] bg-black/30 border border-white/10 rounded-md px-1 py-1 text-center w-full outline-none focus:border-indigo-400" />
+          <input id="bNum" type="number" min="0" max="255" value="90" class="mono text-[11px] bg-black/35 border border-white/10 rounded-md py-1 text-center w-full outline-none focus:border-indigo-400" />
         </div>
       </div>
-
-      <div class="flex gap-1.5 mb-1">
+      <div class="flex items-center gap-1">
         <button class="preset" data-c="#ff0000" style="background:#ff0000" title="Red"></button>
         <button class="preset" data-c="#00ff00" style="background:#00ff00" title="Green"></button>
         <button class="preset" data-c="#0000ff" style="background:#0000ff" title="Blue"></button>
@@ -160,158 +158,202 @@
         <button class="preset" data-c="#ff00ff" style="background:#ff00ff" title="Magenta"></button>
         <button class="preset" data-c="#ffff00" style="background:#ffff00" title="Yellow"></button>
         <button class="preset" data-c="#ffffff" style="background:#ffffff" title="White"></button>
-        <button class="preset" data-c="#7a7a7a" style="background:#7a7a7a" title="Mid gray"></button>
-        <input id="picker" type="color" value="#c8785a" class="ml-auto w-[46px] h-[26px]" title="Pick any color" />
+        <button class="preset" data-c="#808080" style="background:#808080" title="Gray"></button>
+        <label class="ml-auto w-[44px] h-[22px] rounded-[7px] overflow-hidden border border-white/20 cursor-pointer" title="Pick any color">
+          <input id="picker" type="color" value="#c8785a" />
+        </label>
       </div>
     </section>
 
-    <!-- Metrics -->
-    <section class="rounded-xl bg-black/25 border border-white/8 p-3 space-y-1.5">
-      <div class="flex justify-between text-[11.5px]">
+    <!-- metrics -->
+    <section class="rounded-xl bg-black/25 border border-white/8 p-2.5 space-y-1.5">
+      <div class="flex justify-between items-center text-[11px]">
         <span class="text-slate-400">Magnitude |V|</span>
-        <span class="kpi mono text-slate-100"><span id="mMag">243.1</span> <span class="text-slate-500">/ 441.7</span></span>
+        <span class="kpi mono text-slate-100"><span id="mMag">243.1</span><span class="text-slate-500"> / 441.7</span></span>
       </div>
       <div class="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
         <div id="mMagBar" class="h-full rounded-full bg-gradient-to-r from-indigo-400 to-fuchsia-400" style="width:55%"></div>
       </div>
-      <div class="flex justify-between text-[11.5px]">
-        <span class="text-slate-400">Unit vector</span>
-        <span id="mUnit" class="kpi mono text-slate-100">0.82, 0.49, 0.37</span>
-      </div>
-      <div class="flex justify-between text-[11.5px]">
-        <span class="text-slate-400">HSV</span>
-        <span id="mHsv" class="kpi mono text-slate-100">18°, 55%, 78%</span>
-      </div>
-      <div class="flex justify-between text-[11.5px]">
-        <span class="text-slate-400">Luminance / chroma</span>
-        <span id="mLum" class="kpi mono text-slate-100">137 · 118</span>
-      </div>
+      <div class="flex justify-between text-[11px]"><span class="text-slate-400">Unit vector V̂</span><span id="mUnit" class="kpi mono text-slate-100">0.82, 0.49, 0.37</span></div>
+      <div class="flex justify-between text-[11px]"><span class="text-slate-400">HSV</span><span id="mHsv" class="kpi mono text-slate-100">18°, 55%, 78%</span></div>
+      <div class="flex justify-between text-[11px]"><span class="text-slate-400">Luminance · chroma</span><span id="mLum" class="kpi mono text-slate-100">137 · 118</span></div>
     </section>
 
-    <!-- Actions -->
-    <section class="flex flex-wrap gap-2">
+    <!-- actions -->
+    <section class="flex flex-wrap gap-1.5">
       <button id="saveBtn" class="btn primary flex-1">＋ Save vector</button>
       <button id="randBtn" class="btn">🎲 Random</button>
-      <button id="resetBtn" class="btn">⟲ Reset view</button>
+      <button id="mixBtn" class="btn">⚗ Mix demo</button>
     </section>
 
-    <!-- Saved vectors -->
+    <!-- saved -->
     <section>
       <div class="flex items-center justify-between mb-1.5">
         <span class="sec-title">Saved vectors <span id="vCount" class="text-slate-500">(0)</span></span>
-        <button id="clearBtn" class="text-[11px] text-slate-400 hover:text-red-300">clear all</button>
+        <button id="clearBtn" class="text-[10.5px] text-slate-400 hover:text-red-300">clear all</button>
       </div>
-      <div id="vList" class="space-y-1 max-h-[168px] overflow-y-auto scroll pr-1"></div>
-      <p id="vHint" class="text-[11px] text-slate-500 mt-1.5 leading-snug">Save colors, then click two rows to measure the angle between them.</p>
+      <div id="vList" class="space-y-1 max-h-[140px] overflow-y-auto scroll pr-1"></div>
+      <p id="vHint" class="text-[10.5px] text-slate-500 mt-1.5 leading-snug">Save colors, then click two rows to measure the angle between them.</p>
     </section>
 
-    <!-- Comparison -->
-    <section id="cmp" class="hidden rounded-xl bg-indigo-500/10 border border-indigo-400/30 p-3 space-y-1.5">
-      <div class="sec-title text-indigo-300 mb-1">Angle between vectors</div>
-      <div class="flex items-center gap-3">
-        <div class="flex-1">
-          <canvas id="cmpCanvas" width="220" height="90" class="w-full"></canvas>
-        </div>
-        <div class="text-right">
-          <div id="cmpAngle" class="text-2xl font-bold text-white kpi">0.0°</div>
-          <div class="text-[10px] text-slate-400">dot <span id="cmpDot" class="mono">0.00</span> · cos <span id="cmpCos" class="mono">0.00</span></div>
-          <div class="text-[10px] text-slate-400">ΔRGB <span id="cmpDist" class="mono">0</span></div>
+    <!-- comparison -->
+    <section id="cmp" class="hidden rounded-xl bg-indigo-500/10 border border-indigo-400/30 p-2.5">
+      <div class="sec-title text-indigo-300 mb-1.5">Angle between vectors</div>
+      <div class="flex items-center gap-2.5">
+        <canvas id="cmpCanvas" width="200" height="86" class="w-[132px] shrink-0 rounded-lg bg-black/25"></canvas>
+        <div class="flex-1 text-right">
+          <div id="cmpAngle" class="text-[22px] font-bold text-white kpi leading-none">0.0°</div>
+          <div class="text-[9.5px] text-slate-400 mt-1 mono">dot <span id="cmpDot">0.00</span></div>
+          <div class="text-[9.5px] text-slate-400 mono">cos θ <span id="cmpCos">0.00</span></div>
+          <div class="text-[9.5px] text-slate-400 mono">|Δ| <span id="cmpDist">0</span></div>
         </div>
       </div>
     </section>
 
-    <!-- Display toggles -->
+    <!-- slice -->
     <section>
-      <div class="sec-title mb-2">Display</div>
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="sec-title">Cross-section plane</span>
+        <button class="btn" data-t="slice">show</button>
+      </div>
+      <div id="sliceUI" class="space-y-2" style="display:none">
+        <div class="flex gap-1">
+          <button class="btn flex-1 on" data-slice="lum">⊥ Gray</button>
+          <button class="btn flex-1" data-slice="r">R =</button>
+          <button class="btn flex-1" data-slice="g">G =</button>
+          <button class="btn flex-1" data-slice="b">B =</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[10.5px] text-slate-400 w-[54px]">position</span>
+          <input id="sliceSlider" type="range" min="0" max="1000" value="500" />
+          <span id="sliceVal" class="mono text-[10.5px] text-slate-300 w-[42px] text-right">0.50</span>
+        </div>
+        <label class="flex items-center gap-2 text-[10.5px] text-slate-400 cursor-pointer select-none">
+          <input id="sliceLock" type="checkbox" class="accent-indigo-500" />
+          lock plane to this color's luminance
+        </label>
+      </div>
+      <p id="sliceNote" class="text-[10.5px] text-slate-500 leading-snug mt-1.5">Slicing perpendicular to the gray axis reveals the hue hexagon.</p>
+    </section>
+
+    <!-- challenge -->
+    <section>
+      <div class="flex items-center justify-between mb-1.5">
+        <span class="sec-title">Practice · find the color</span>
+        <button id="challengeBtn" class="btn">start</button>
+      </div>
+      <div id="chUI" class="space-y-2" style="display:none">
+        <div class="flex items-center gap-2.5">
+          <div id="chTarget" class="swatch w-12 h-12 rounded-xl shrink-0" style="background:#000"></div>
+          <div class="flex-1 text-[10.5px] text-slate-400 leading-snug">
+            Steer the white vector onto the hidden color using the sliders, then check.
+            <div class="mono text-[10px] text-slate-500 mt-1">score <span id="chScore" class="text-slate-200">—</span> · best <span id="chBest" class="text-slate-200">—</span></div>
+          </div>
+        </div>
+        <div class="flex gap-1.5">
+          <button id="chCheck" class="btn primary flex-1">Check match</button>
+          <button id="chReveal" class="btn">Reveal</button>
+          <button id="chNew" class="btn">New</button>
+        </div>
+        <div id="chResult" class="text-[11px] leading-snug rounded-lg px-2.5 py-1.5 bg-white/5 border border-white/10 text-slate-300"></div>
+      </div>
+    </section>
+
+    <!-- display -->
+    <section>
+      <div class="sec-title mb-1.5">Display</div>
       <div class="flex flex-wrap gap-1.5">
-        <button class="btn" data-t="components">Components</button>
-        <button class="btn" data-t="gray">Gray axis</button>
+        <button class="btn on" data-t="components">Components</button>
+        <button class="btn on" data-t="gray">Gray axis</button>
         <button class="btn" data-t="corners">Corners</button>
+        <button class="btn" data-t="sum">A + B</button>
         <button class="btn on" data-t="cloud">Color cloud</button>
-        <button class="btn on" data-t="spin">Auto-spin</button>
         <button class="btn" data-t="labels">Labels</button>
       </div>
       <div id="cloudRow" class="mt-2 flex items-center gap-1.5" style="display:none">
-        <span class="text-[11px] text-slate-400 mr-1">Density</span>
+        <span class="text-[10.5px] text-slate-400 mr-1">density</span>
         <button class="btn" data-n="5">5³</button>
         <button class="btn on" data-n="9">9³</button>
         <button class="btn" data-n="17">17³</button>
       </div>
     </section>
 
-    <p class="text-[10.5px] text-slate-500 leading-relaxed pb-1">
-      Axes are orthogonal: R ⟂ G ⟂ B. Lengths in 0–255 units, so the cube's body diagonal (black → white) is √(3·255²) ≈ 441.7.
+    <p class="text-[10px] text-slate-500 leading-relaxed">
+      The R, G, B axes are mutually orthogonal, so the cube's body diagonal (black → white) has length
+      √(3·255²) ≈ 441.7. Angle between two colors = cosine similarity of their channels.
+      <span class="text-slate-400">Shortcuts: R reset · S save · Space spin · ← → tour</span>
     </p>
   </div>
 </div>
 
-<div id="err" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/80 text-center p-8 text-sm text-slate-300">
-  Could not initialize WebGL. Try a different browser or enable hardware acceleration.
+<div id="err" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/85 text-center p-8 text-sm text-slate-300">
+  WebGL could not start. Try another browser or enable hardware acceleration.
 </div>
 
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-THREE.ColorManagement.enabled = false; // keep sRGB values exactly as authored
-
-const MAX = 441.6729559; // sqrt(3)*255
+THREE.ColorManagement.enabled = false;
+const MAX = Math.sqrt(3) * 255;
+const $ = id => document.getElementById(id);
 
 /* ------------------------------------------------------------------ state */
 const state = {
   r: 200, g: 120, b: 90,
-  vectors: [],        // {id, r,g,b, group, arrow, sphere, label}
-  selected: [],       // ids (max 2)
-  nextId: 1,
-  show: { components: false, gray: false, corners: false, cloud: true, spin: true, labels: false },
-  cloudN: 9
+  vectors: [], selected: [], nextId: 1,
+  show: { components: false, gray: true, corners: false, cloud: true, spin: true, labels: false },
+  cloudN: 9,
+  sliceAxis: 'lum', sliceT: 0.5, sliceLock: true,
+  lesson: 0, demo: null, challenge: null, best: null
 };
 
-/* ------------------------------------------------------------- three setup */
-const canvas = document.getElementById('scene');
+/* ---------------------------------------------------------------- renderer */
+const canvas = $('scene');
 let renderer;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-} catch (e) {
-  document.getElementById('err').classList.remove('hidden');
-  document.getElementById('err').classList.add('flex');
-  throw e;
-}
+try { renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true }); }
+catch (e) { $('err').classList.remove('hidden'); $('err').classList.add('flex'); throw e; }
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.outputColorSpace = THREE.LinearSRGBColorSpace;
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(42, 1, 0.01, 100);
-const HOME = new THREE.Vector3(2.25, 1.75, 2.45);
-camera.position.copy(HOME);
+const T = new THREE.Vector3(0.5, 0.5, 0.5);
+const VIEWS = {
+  iso:  { p: new THREE.Vector3(2.15, 1.7, 2.4),  t: T.clone() },
+  r:    { p: new THREE.Vector3(3.3, 0.55, 0.55), t: T.clone() },
+  g:    { p: new THREE.Vector3(0.55, 3.3, 0.55), t: T.clone() },
+  b:    { p: new THREE.Vector3(0.55, 0.55, 3.3), t: T.clone() },
+  gray: { p: new THREE.Vector3(2.35, 2.35, 2.35),t: T.clone() }
+};
+camera.position.copy(VIEWS.iso.p);
 
 const controls = new OrbitControls(camera, renderer.domElement);
-controls.target.set(0.5, 0.5, 0.5);
-controls.enableDamping = true;
-controls.dampingFactor = 0.075;
-controls.minDistance = 0.7;
-controls.maxDistance = 12;
-controls.autoRotateSpeed = 0.9;
+controls.target.copy(T);
+controls.enableDamping = true; controls.dampingFactor = 0.08;
+controls.minDistance = 0.6; controls.maxDistance = 12;
+controls.autoRotateSpeed = 0.85;
 
 function resize() {
   const w = window.innerWidth, h = window.innerHeight;
-  renderer.setSize(w, h, false);
-  camera.aspect = w / h;
-  camera.updateProjectionMatrix();
+  renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix();
 }
-window.addEventListener('resize', resize);
-resize();
+window.addEventListener('resize', resize); resize();
 
-/* ---------------------------------------------------------------- helpers */
-function roundRect(ctx, x, y, w, h, r) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.arcTo(x + w, y, x + w, y + h, r);
-  ctx.arcTo(x + w, y + h, x, y + h, r);
-  ctx.arcTo(x, y + h, x, y, r);
-  ctx.arcTo(x, y, x + w, y, r);
-  ctx.closePath();
+/* camera tween */
+let camTween = null;
+function flyTo(p, t, dur = 1.1) {
+  camTween = { p0: camera.position.clone(), p1: p.clone(), t0: controls.target.clone(), t1: t.clone(), k: 0, dur };
 }
+function setView(name) {
+  const v = VIEWS[name]; if (!v) return;
+  flyTo(v.p, v.t);
+  document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === name));
+}
+document.querySelectorAll('[data-view]').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+/* ------------------------------------------------------------------ helpers */
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 
 function makeLabel(text, color = '#e6ecfb', px = 52) {
   const cv = document.createElement('canvas');
@@ -319,50 +361,42 @@ function makeLabel(text, color = '#e6ecfb', px = 52) {
   const font = `700 ${px}px ui-sans-serif, system-ui, sans-serif`;
   const draw = (t, c) => {
     ctx.font = font;
-    const w = Math.ceil(ctx.measureText(t).width) + px * 0.7;
-    const h = Math.ceil(px * 1.45);
+    const w = Math.ceil(ctx.measureText(t).width) + px * 0.75;
+    const h = Math.ceil(px * 1.5);
     cv.width = w; cv.height = h;
     ctx = cv.getContext('2d');
     ctx.font = font; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'rgba(6,8,14,0.68)';
-    roundRect(ctx, 0, 0, w, h, h / 2.6); ctx.fill();
-    ctx.fillStyle = c; ctx.fillText(t, w / 2, h / 2 + 1);
+    ctx.fillStyle = 'rgba(6,8,14,0.72)'; roundRect(ctx,0,0,w,h,h/2.6); ctx.fill();
+    ctx.fillStyle = c; ctx.fillText(t, w/2, h/2 + 1);
     return { w, h };
   };
   const dim = draw(text, color);
-  const tex = new THREE.CanvasTexture(cv);
-  tex.minFilter = THREE.LinearFilter;
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false }));
+  const tex = new THREE.CanvasTexture(cv); tex.minFilter = THREE.LinearFilter;
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map:tex, transparent:true, depthTest:false, depthWrite:false }));
   sprite.renderOrder = 999;
-  const s = 0.085;
+  const s = 0.082;
   sprite.scale.set(s * dim.w / dim.h, s, 1);
   sprite.userData.setText = (t, c = color) => {
-    const d = draw(t, c);
-    tex.needsUpdate = true;
+    const d = draw(t, c); tex.needsUpdate = true;
     sprite.scale.set(s * d.w / d.h, s, 1);
   };
   return sprite;
 }
 
-function createArrow(color, radius = 0.012, opacity = 1) {
+function createArrow(color, radius = 0.012) {
   const g = new THREE.Group();
-  const mat = new THREE.MeshBasicMaterial({ color, transparent: opacity < 1, opacity });
-  const shaftGeo = new THREE.CylinderGeometry(radius, radius, 1, 14);
-  shaftGeo.translate(0, 0.5, 0);
+  const mat = new THREE.MeshBasicMaterial({ color });
+  const shaftGeo = new THREE.CylinderGeometry(radius, radius, 1, 14); shaftGeo.translate(0, 0.5, 0);
   const shaft = new THREE.Mesh(shaftGeo, mat);
   const headLen = radius * 6;
-  const headGeo = new THREE.ConeGeometry(radius * 2.9, headLen, 18);
-  const head = new THREE.Mesh(headGeo, mat);
+  const head = new THREE.Mesh(new THREE.ConeGeometry(radius * 2.9, headLen, 18), mat);
   g.add(shaft, head);
   g.userData = { shaft, head, mat, headLen };
   return g;
 }
-
-const UP = new THREE.Vector3(0, 1, 0);
-const _d = new THREE.Vector3();
+const UP = new THREE.Vector3(0,1,0), _d = new THREE.Vector3();
 function setArrow(a, from, to) {
-  _d.subVectors(to, from);
-  const len = _d.length();
+  _d.subVectors(to, from); const len = _d.length();
   if (len < 1e-4) { a.visible = false; return; }
   a.visible = true;
   a.position.copy(from);
@@ -372,213 +406,275 @@ function setArrow(a, from, to) {
   a.userData.head.position.y = len - hl / 2;
   a.userData.head.scale.setScalar(hl / a.userData.headLen);
 }
+const O = new THREE.Vector3(0,0,0);
 
-/* ------------------------------------------------------------ static cube */
-const cube = new THREE.Group();
-scene.add(cube);
-
-// faint faces
-const faces = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.035, side: THREE.DoubleSide, depthWrite: false })
-);
-faces.position.set(0.5, 0.5, 0.5);
-cube.add(faces);
-
-// edges
-const edges = new THREE.LineSegments(
-  new THREE.EdgesGeometry(new THREE.BoxGeometry(1, 1, 1)),
-  new THREE.LineBasicMaterial({ color: 0xaab6d4, transparent: true, opacity: 0.5 })
-);
-edges.position.set(0.5, 0.5, 0.5);
-cube.add(edges);
-
-// base grid on the R–B plane (G = 0)
+/* ------------------------------------------------------------- static cube */
+const cube = new THREE.Group(); scene.add(cube);
+const faces = new THREE.Mesh(new THREE.BoxGeometry(1,1,1),
+  new THREE.MeshBasicMaterial({ color:0xffffff, transparent:true, opacity:0.03, side:THREE.DoubleSide, depthWrite:false }));
+faces.position.set(0.5,0.5,0.5); cube.add(faces);
+const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1,1,1)),
+  new THREE.LineBasicMaterial({ color:0xaab6d4, transparent:true, opacity:0.5 }));
+edges.position.set(0.5,0.5,0.5); cube.add(edges);
 const grid = new THREE.GridHelper(1, 5, 0x5f6b8c, 0x39425c);
-grid.position.set(0.5, 0, 0.5);
-grid.material.transparent = true;
-grid.material.opacity = 0.5;
-cube.add(grid);
+grid.position.set(0.5,0,0.5); grid.material.transparent = true; grid.material.opacity = 0.5; cube.add(grid);
 
-// axes
-const O = new THREE.Vector3(0, 0, 0);
 const axisDefs = [
-  { dir: new THREE.Vector3(1.22, 0, 0), color: 0xff4d4d, label: 'R', lc: '#ff7a7a', lp: new THREE.Vector3(1.33, 0, 0) },
-  { dir: new THREE.Vector3(0, 1.22, 0), color: 0x37d95f, label: 'G', lc: '#79e894', lp: new THREE.Vector3(0, 1.33, 0) },
-  { dir: new THREE.Vector3(0, 0, 1.22), color: 0x4d8bff, label: 'B', lc: '#8fb6ff', lp: new THREE.Vector3(0, 0, 1.33) }
+  { dir:new THREE.Vector3(1.2,0,0), color:0xff4d4d, label:'R', lc:'#ff8080', lp:new THREE.Vector3(1.32,0,0) },
+  { dir:new THREE.Vector3(0,1.2,0), color:0x37d95f, label:'G', lc:'#7ee894', lp:new THREE.Vector3(0,1.32,0) },
+  { dir:new THREE.Vector3(0,0,1.2), color:0x4d8bff, label:'B', lc:'#93b8ff', lp:new THREE.Vector3(0,0,1.32) }
 ];
 const axisLabels = [];
 axisDefs.forEach(a => {
-  const arrow = createArrow(a.color, 0.008);
-  setArrow(arrow, O, a.dir);
-  cube.add(arrow);
-  const lbl = makeLabel(a.label, a.lc, 62);
-  lbl.position.copy(a.lp);
-  cube.add(lbl); axisLabels.push(lbl);
+  const ar = createArrow(a.color, 0.008); setArrow(ar, O, a.dir); cube.add(ar);
+  const lbl = makeLabel(a.label, a.lc, 64); lbl.position.copy(a.lp); cube.add(lbl); axisLabels.push(lbl);
 });
+const originLabel = makeLabel('0 · black', '#8b96b4', 44);
+originLabel.position.set(-0.14,-0.1,-0.1); cube.add(originLabel); axisLabels.push(originLabel);
+const whiteLabel = makeLabel('(255,255,255) white', '#c9d3ea', 42);
+whiteLabel.position.set(1.17,1.17,1.17); cube.add(whiteLabel); axisLabels.push(whiteLabel);
 
-// origin + tips labels
-const originLabel = makeLabel('0  black', '#8b96b4', 46);
-originLabel.position.set(-0.13, -0.09, -0.09);
-cube.add(originLabel); axisLabels.push(originLabel);
-const whiteLabel = makeLabel('255,255,255  white', '#c9d3ea', 46);
-whiteLabel.position.set(1.16, 1.16, 1.16);
-cube.add(whiteLabel); axisLabels.push(whiteLabel);
-
-// corner spheres
-const corners = new THREE.Group();
-cube.add(corners);
+const corners = new THREE.Group(); cube.add(corners);
 for (let i = 0; i < 8; i++) {
-  const x = (i >> 0) & 1, y = (i >> 1) & 1, z = (i >> 2) & 1;
-  const col = new THREE.Color(x, y, z);
-  const s = new THREE.Mesh(new THREE.SphereGeometry(0.032, 20, 16), new THREE.MeshBasicMaterial({ color: col }));
-  s.position.set(x, y, z);
-  corners.add(s);
+  const x = i & 1, y = (i >> 1) & 1, z = (i >> 2) & 1;
+  const s = new THREE.Mesh(new THREE.SphereGeometry(0.03,18,14), new THREE.MeshBasicMaterial({ color:new THREE.Color(x,y,z) }));
+  s.position.set(x,y,z); corners.add(s);
 }
 
-// gray diagonal (black -> white)
-const grayGeom = new THREE.BufferGeometry().setFromPoints([O, new THREE.Vector3(1, 1, 1)]);
-const grayLine = new THREE.Line(grayGeom, new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.045, gapSize: 0.035, transparent: true, opacity: 0.55 }));
-grayLine.computeLineDistances();
-scene.add(grayLine);
-const grayLabel = makeLabel('gray axis (R=G=B)', '#cbd5e9', 44);
-grayLabel.position.set(0.52, 0.62, 0.52);
-scene.add(grayLabel);
+const grayLine = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([O, new THREE.Vector3(1,1,1)]),
+  new THREE.LineDashedMaterial({ color:0xffffff, dashSize:0.045, gapSize:0.035, transparent:true, opacity:0.55 }));
+grayLine.computeLineDistances(); scene.add(grayLine);
+const grayLabel = makeLabel('gray axis · R=G=B', '#cbd5e9', 42);
+grayLabel.position.set(0.53,0.66,0.53); scene.add(grayLabel); axisLabels.push(grayLabel);
 
-/* ------------------------------------------------------- color point cloud */
+/* --------------------------------------------------------------- the cloud */
 let cloud = null;
 function buildCloud(n) {
   if (cloud) { scene.remove(cloud); cloud.geometry.dispose(); cloud.material.dispose(); cloud = null; }
   if (!state.show.cloud) return;
-  const count = n * n * n;
-  const pos = new Float32Array(count * 3);
-  const col = new Float32Array(count * 3);
-  let p = 0;
-  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) for (let k = 0; k < n; k++) {
-    const t = (n === 1) ? 0 : 1 / (n - 1);
-    pos[p * 3] = i * t; pos[p * 3 + 1] = j * t; pos[p * 3 + 2] = k * t;
-    col[p * 3] = i * t; col[p * 3 + 1] = j * t; col[p * 3 + 2] = k * t;
-    p++;
+  const c = n * n * n, pos = new Float32Array(c*3), col = new Float32Array(c*3);
+  const t = n === 1 ? 0 : 1/(n-1); let p = 0;
+  for (let i=0;i<n;i++) for (let j=0;j<n;j++) for (let k=0;k<n;k++) {
+    pos[p*3]=i*t; pos[p*3+1]=j*t; pos[p*3+2]=k*t;
+    col[p*3]=i*t; col[p*3+1]=j*t; col[p*3+2]=k*t; p++;
   }
   const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-  cloud = new THREE.Points(geo, new THREE.PointsMaterial({ size: 0.016, vertexColors: true, sizeAttenuation: true, transparent: true, opacity: 0.95 }));
+  geo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  geo.setAttribute('color', new THREE.BufferAttribute(col,3));
+  cloud = new THREE.Points(geo, new THREE.PointsMaterial({ size:0.015, vertexColors:true, transparent:true, opacity:0.95 }));
   scene.add(cloud);
 }
 
-/* --------------------------------------------------------- active vector */
-const active = new THREE.Group();
-scene.add(active);
-
+/* ------------------------------------------------------------ active vector */
+const active = new THREE.Group(); scene.add(active);
 const mainArrow = createArrow(0xffffff, 0.017);
-const tipSphere = new THREE.Mesh(new THREE.SphereGeometry(0.042, 24, 18), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-const tipRing = new THREE.Mesh(
-  new THREE.SphereGeometry(0.062, 24, 18),
-  new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.22, depthWrite: false })
-);
+const tipSphere = new THREE.Mesh(new THREE.SphereGeometry(0.042,24,18), new THREE.MeshBasicMaterial({ color:0xffffff }));
+const tipRing = new THREE.Mesh(new THREE.SphereGeometry(0.063,24,18),
+  new THREE.MeshBasicMaterial({ color:0xffffff, transparent:true, opacity:0.2, depthWrite:false }));
 const tipLabel = makeLabel('(200, 120, 90)', '#ffffff', 44);
 active.add(mainArrow, tipSphere, tipRing, tipLabel);
 
-const compArrows = [
-  createArrow(0xff4d4d, 0.0075),
-  createArrow(0x37d95f, 0.0075),
-  createArrow(0x4d8bff, 0.0075)
-];
+const compArrows = [createArrow(0xff4d4d,0.0075), createArrow(0x37d95f,0.0075), createArrow(0x4d8bff,0.0075)];
 compArrows.forEach(a => active.add(a));
 
-// dashed decomposition box (12 edges from origin to the point)
-const boxPos = new Float32Array(24 * 3 * 3);
 const boxGeom = new THREE.BufferGeometry();
-boxGeom.setAttribute('position', new THREE.BufferAttribute(boxPos, 3));
-const boxLines = new THREE.LineSegments(boxGeom, new THREE.LineDashedMaterial({ color: 0x93a3c4, dashSize: 0.03, gapSize: 0.028, transparent: true, opacity: 0.65 }));
+boxGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(24*3), 3));
+const boxLines = new THREE.LineSegments(boxGeom,
+  new THREE.LineDashedMaterial({ color:0x93a3c4, dashSize:0.03, gapSize:0.028, transparent:true, opacity:0.6 }));
 active.add(boxLines);
+const BOX_EDGES = [[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],[0,4],[1,5],[2,6],[3,7]];
 
-const BOX_EDGES = [
-  [0, 1], [1, 3], [3, 2], [2, 0],   // z = 0 face
-  [4, 5], [5, 7], [7, 6], [6, 4],   // z = b face
-  [0, 4], [1, 5], [2, 6], [3, 7]    // connectors
-];
-
-// luminance decomposition (projection onto gray axis)
 const chromaLine = new THREE.Line(
   new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
-  new THREE.LineDashedMaterial({ color: 0xffd479, dashSize: 0.03, gapSize: 0.025, transparent: true, opacity: 0.85 })
-);
-const footSphere = new THREE.Mesh(new THREE.SphereGeometry(0.022, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffd479 }));
+  new THREE.LineDashedMaterial({ color:0xffd479, dashSize:0.03, gapSize:0.025, transparent:true, opacity:0.9 }));
+const footSphere = new THREE.Mesh(new THREE.SphereGeometry(0.021,16,12), new THREE.MeshBasicMaterial({ color:0xffd479 }));
 scene.add(chromaLine, footSphere);
 
-/* ---------------------------------------------------------- saved vectors */
-const savedGroup = new THREE.Group();
-scene.add(savedGroup);
+/* --------------------------------------------------------------- slice plane */
+const sliceGroup = new THREE.Group(); scene.add(sliceGroup);
+const MAXP = 8;
+const sliceOutlineGeom = new THREE.BufferGeometry();
+sliceOutlineGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(MAXP*3), 3));
+const sliceOutline = new THREE.LineLoop(sliceOutlineGeom,
+  new THREE.LineBasicMaterial({ color:0xffffff, transparent:true, opacity:0.85 }));
+const sliceFillGeom = new THREE.BufferGeometry();
+sliceFillGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(36*3), 3));
+const sliceFill = new THREE.Mesh(sliceFillGeom,
+  new THREE.MeshBasicMaterial({ color:0xffffff, transparent:true, opacity:0.12, side:THREE.DoubleSide, depthWrite:false }));
+const sliceLabel = makeLabel('slice', '#e8eefb', 40);
+sliceGroup.add(sliceOutline, sliceFill, sliceLabel);
 
-const arcLine = new THREE.Line(
-  new THREE.BufferGeometry(),
-  new THREE.LineBasicMaterial({ color: 0xfbbf24 })
-);
+const CUBE_V = []; for (let i=0;i<8;i++) CUBE_V.push(new THREE.Vector3(i&1,(i>>1)&1,(i>>2)&1));
+const CUBE_E = [[0,1],[2,3],[4,5],[6,7],[0,2],[1,3],[4,6],[5,7],[0,4],[1,5],[2,6],[3,7]];
+const sliceNormals = {
+  r: new THREE.Vector3(1,0,0), g: new THREE.Vector3(0,1,0), b: new THREE.Vector3(0,0,1),
+  lum: new THREE.Vector3(1,1,1).normalize()
+};
+const _v1 = new THREE.Vector3(), _v2 = new THREE.Vector3(), _u = new THREE.Vector3(), _w = new THREE.Vector3(), _c = new THREE.Vector3();
+
+function slicePolygon(axis, t) {
+  const n = sliceNormals[axis];
+  const d = axis === 'lum' ? t * Math.sqrt(3) : t;
+  const pts = [];
+  CUBE_E.forEach(([a, bi]) => {
+    const da = n.dot(CUBE_V[a]), db = n.dot(CUBE_V[bi]);
+    if ((da - d) * (db - d) < 0) pts.push(CUBE_V[a].clone().lerp(CUBE_V[bi], (d - da) / (db - da)));
+  });
+  if (pts.length < 3) return pts;
+  _c.set(0,0,0); pts.forEach(p => _c.add(p)); _c.divideScalar(pts.length);
+  _u.set(1,0,0); if (Math.abs(n.x) > 0.9) _u.set(0,1,0);
+  _u.sub(_v1.copy(n).multiplyScalar(n.dot(_u))).normalize();
+  _w.crossVectors(n, _u);
+  pts.sort((p, q) => {
+    const ap = Math.atan2(_v1.copy(p).sub(_c).dot(_w), _v1.copy(p).sub(_c).dot(_u));
+    const aq = Math.atan2(_v1.copy(q).sub(_c).dot(_w), _v1.copy(q).sub(_c).dot(_u));
+    return ap - aq;
+  });
+  return pts;
+}
+
+function updateSlice() {
+  const on = state.show.slice;
+  sliceGroup.visible = on; $('sliceUI').style.display = on ? 'block' : 'none';
+  if (!on) return;
+  const pts = slicePolygon(state.sliceAxis, state.sliceT);
+  if (pts.length < 3) { sliceOutline.visible = sliceFill.visible = sliceLabel.visible = false; return; }
+  sliceOutline.visible = sliceFill.visible = sliceLabel.visible = true;
+  const oArr = sliceOutlineGeom.attributes.position.array;
+  pts.forEach((p, i) => { oArr[i*3]=p.x; oArr[i*3+1]=p.y; oArr[i*3+2]=p.z; });
+  sliceOutlineGeom.attributes.position.needsUpdate = true;
+  sliceOutlineGeom.setDrawRange(0, pts.length);
+  const fArr = sliceFillGeom.attributes.position.array; let o = 0;
+  for (let i = 1; i < pts.length - 1; i++) {
+    fArr[o++]=pts[0].x; fArr[o++]=pts[0].y; fArr[o++]=pts[0].z;
+    fArr[o++]=pts[i].x; fArr[o++]=pts[i].y; fArr[o++]=pts[i].z;
+    fArr[o++]=pts[i+1].x; fArr[o++]=pts[i+1].y; fArr[o++]=pts[i+1].z;
+  }
+  sliceFillGeom.attributes.position.needsUpdate = true;
+  sliceFillGeom.setDrawRange(0, (pts.length - 2) * 3);
+  sliceFillGeom.computeVertexNormals();
+  // centroid color = average of the slice (what a flat average of that slice looks like)
+  _c.set(0,0,0); pts.forEach(p => _c.add(p)); _c.divideScalar(pts.length);
+  sliceFill.material.color.setRGB(_c.x, _c.y, _c.z);
+  sliceOutline.material.color.setRGB(Math.min(1,_c.x+0.35), Math.min(1,_c.y+0.35), Math.min(1,_c.z+0.35));
+  sliceLabel.position.copy(_c).add(new THREE.Vector3(0,0.085,0));
+  const txt = state.sliceAxis === 'lum'
+    ? `brightness ${(state.sliceT*100).toFixed(0)}%`
+    : `${state.sliceAxis.toUpperCase()} = ${Math.round(state.sliceT*255)}`;
+  sliceLabel.userData.setText(txt, '#e8eefb');
+  $('sliceVal').textContent = state.sliceT.toFixed(2);
+}
+
+/* --------------------------------------------------------- saved vectors */
+const savedGroup = new THREE.Group(); scene.add(savedGroup);
+const arcLine = new THREE.Line(new THREE.BufferGeometry(), new THREE.LineBasicMaterial({ color:0xfbbf24 }));
 arcLine.renderOrder = 998;
-const arcLabel = makeLabel('0°', '#fde68a', 46);
-scene.add(arcLine, arcLabel);
+const arcLabel = makeLabel('0°', '#fde68a', 44); scene.add(arcLine, arcLabel);
 
 function addVector(r, g, b) {
   const id = state.nextId++;
-  const col = new THREE.Color(r / 255, g / 255, b / 255);
-  const arrow = createArrow(col, 0.012, 0.95);
-  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.03, 20, 16), new THREE.MeshBasicMaterial({ color: col }));
-  const label = makeLabel('V' + id, '#' + col.getHexString(), 42);
-  label.userData.baseScale = 1;
-  const group = new THREE.Group();
-  group.add(arrow, sphere, label);
+  const col = new THREE.Color(r/255, g/255, b/255);
+  const arrow = createArrow(col, 0.011);
+  const sphere = new THREE.Mesh(new THREE.SphereGeometry(0.028,18,14), new THREE.MeshBasicMaterial({ color:col }));
+  const label = makeLabel('V'+id, '#'+col.getHexString(), 42);
+  const group = new THREE.Group(); group.add(arrow, sphere, label);
   savedGroup.add(group);
   const v = { id, r, g, b, group, arrow, sphere, label };
-  state.vectors.push(v);
-  layoutVector(v);
+  state.vectors.push(v); layoutVector(v);
   return v;
 }
-
 function layoutVector(v) {
-  const to = new THREE.Vector3(v.r / 255, v.g / 255, v.b / 255);
+  const to = new THREE.Vector3(v.r/255, v.g/255, v.b/255);
   setArrow(v.arrow, O, to);
   v.sphere.position.copy(to);
-  v.label.position.copy(to).multiplyScalar(1.14).add(new THREE.Vector3(0, 0.05, 0));
+  v.label.position.copy(to).multiplyScalar(1.15).add(new THREE.Vector3(0,0.05,0));
 }
-
 function removeVector(id) {
-  const i = state.vectors.findIndex(v => v.id === id);
-  if (i < 0) return;
-  const v = state.vectors[i];
-  savedGroup.remove(v.group);
+  const i = state.vectors.findIndex(v => v.id === id); if (i < 0) return;
+  const v = state.vectors[i]; savedGroup.remove(v.group);
   v.group.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } });
-  state.vectors.splice(i, 1);
-  state.selected = state.selected.filter(s => s !== id);
+  state.vectors.splice(i,1); state.selected = state.selected.filter(s => s !== id);
 }
 
-/* -------------------------------------------------------------- UI update */
-const $ = id => document.getElementById(id);
-const rS = $('rSlider'), gS = $('gSlider'), bS = $('bSlider');
-const rN = $('rNum'), gN = $('gNum'), bN = $('bNum');
+/* -------------------------------------------- vector addition + blending */
+const sumGroup = new THREE.Group(); scene.add(sumGroup);
+const sumArrow = createArrow(0xffffff, 0.014);
+const sumLabel = makeLabel('A + B', '#ffffff', 42);
+const paraGeom = new THREE.BufferGeometry();
+paraGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(6*3), 3));
+const paraLines = new THREE.LineSegments(paraGeom,
+  new THREE.LineDashedMaterial({ color:0xdfe7ff, dashSize:0.028, gapSize:0.024, transparent:true, opacity:0.8 }));
+const mixGeom = new THREE.BufferGeometry();
+mixGeom.setAttribute('position', new THREE.BufferAttribute(new Float32Array(49*3), 3));
+mixGeom.setAttribute('color', new THREE.BufferAttribute(new Float32Array(49*3), 3));
+const mixLine = new THREE.Line(mixGeom, new THREE.LineBasicMaterial({ vertexColors:true }));
+sumGroup.add(sumArrow, sumLabel, paraLines, mixLine);
 
-function hex2(n) { return n.toString(16).padStart(2, '0'); }
-function rgbToHsv(r, g, b) {
-  r /= 255; g /= 255; b /= 255;
-  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn;
-  let h = 0;
-  if (d !== 0) {
-    if (mx === r) h = 60 * (((g - b) / d) % 6);
-    else if (mx === g) h = 60 * ((b - r) / d + 2);
-    else h = 60 * ((r - g) / d + 4);
+function updateSum() {
+  const a = state.vectors.find(v => v.id === state.selected[0]) || state.vectors[0];
+  const b = state.vectors.find(v => v.id === state.selected[1]) || state.vectors[1];
+  const on = state.show.sum && a && b;
+  sumGroup.visible = !!on;
+  if (!on) return;
+  const va = new THREE.Vector3(a.r/255, a.g/255, a.b/255);
+  const vb = new THREE.Vector3(b.r/255, b.g/255, b.b/255);
+  const vs = va.clone().add(vb);
+  // clip to cube for display if the sum overflows (still labeled with true value)
+  const vc = new THREE.Vector3(Math.min(1,vs.x), Math.min(1,vs.y), Math.min(1,vs.z));
+  setArrow(sumArrow, O, vc);
+  const sr = Math.min(255, a.r+b.r), sg = Math.min(255, a.g+b.g), sb = Math.min(255, a.b+b.b);
+  sumArrow.userData.mat.color.setRGB(sr/255, sg/255, sb/255);
+  const overflow = vs.x > 1.001 || vs.y > 1.001 || vs.z > 1.001;
+  sumLabel.position.copy(vc).multiplyScalar(1.1).add(new THREE.Vector3(0, -0.1, 0));
+  sumLabel.userData.setText(`A+B = (${a.r+b.r}, ${a.g+b.g}, ${a.b+b.b})${overflow ? ' → clipped' : ''}`,
+    overflow ? '#fca5a5' : '#ffffff');
+  // parallelogram: A -> A+B and B -> A+B
+  const pa = paraGeom.attributes.position.array;
+  const clippedA = va.clone().add(new THREE.Vector3(Math.min(0,1-vs.x), Math.min(0,1-vs.y), Math.min(0,1-vs.z)));
+  const clippedB = vb.clone().add(new THREE.Vector3(Math.min(0,1-vs.x), Math.min(0,1-vs.y), Math.min(0,1-vs.z)));
+  [va, clippedA, vb, clippedB].forEach((p, i) => { pa[i*3]=p.x; pa[i*3+1]=p.y; pa[i*3+2]=p.z; });
+  paraGeom.attributes.position.needsUpdate = true; paraLines.computeLineDistances();
+  // blend path between the two tips
+  const mp = mixGeom.attributes.position.array, mc = mixGeom.attributes.color.array;
+  for (let i = 0; i <= 48; i++) {
+    const t = i / 48, p = va.clone().lerp(vb, t);
+    mp[i*3]=p.x; mp[i*3+1]=p.y; mp[i*3+2]=p.z;
+    mc[i*3]=p.x; mc[i*3+1]=p.y; mc[i*3+2]=p.z;
   }
-  if (h < 0) h += 360;
-  return [h, mx === 0 ? 0 : d / mx, mx];
+  mixGeom.attributes.position.needsUpdate = true; mixGeom.attributes.color.needsUpdate = true;
+}
+
+/* ----------------------------------------------------------------- UI */
+const rS=$('rSlider'), gS=$('gSlider'), bS=$('bSlider'), rN=$('rNum'), gN=$('gNum'), bN=$('bNum');
+const hex2 = n => n.toString(16).padStart(2,'0');
+function rgbToHsv(r,g,b) {
+  r/=255; g/=255; b/=255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), d=mx-mn; let h=0;
+  if (d) { if (mx===r) h=60*(((g-b)/d)%6); else if (mx===g) h=60*((b-r)/d+2); else h=60*((r-g)/d+4); }
+  if (h<0) h+=360;
+  return [h, mx===0?0:d/mx, mx];
+}
+function hsvToRgb(h,s,v) {
+  const c=v*s, x=c*(1-Math.abs((h/60)%2-1)), m=v-c;
+  let r=0,g=0,b=0;
+  if (h<60){r=c;g=x;} else if (h<120){r=x;g=c;} else if (h<180){g=c;b=x;}
+  else if (h<240){g=x;b=c;} else if (h<300){r=x;b=c;} else {r=c;b=x;}
+  return [Math.round((r+m)*255), Math.round((g+m)*255), Math.round((b+m)*255)];
+}
+
+function setRGB(r,g,b) {
+  state.r = Math.round(THREE.MathUtils.clamp(r,0,255));
+  state.g = Math.round(THREE.MathUtils.clamp(g,0,255));
+  state.b = Math.round(THREE.MathUtils.clamp(b,0,255));
+  updateActive();
 }
 
 function updateActive() {
   const { r, g, b } = state;
-  const col = new THREE.Color(r / 255, g / 255, b / 255);
-  const hex = '#' + hex2(r) + hex2(g) + hex2(b);
-
-  // sliders + inputs
-  rS.value = r; gS.value = g; bS.value = b;
+  const col = new THREE.Color(r/255, g/255, b/255);
+  const hex = '#'+hex2(r)+hex2(g)+hex2(b);
+  rS.value=r; gS.value=g; bS.value=b;
   if (document.activeElement !== rN) rN.value = r;
   if (document.activeElement !== gN) gN.value = g;
   if (document.activeElement !== bN) bN.value = b;
@@ -589,79 +685,69 @@ function updateActive() {
   $('hexLabel').textContent = hex.toUpperCase();
   $('swatch').style.background = hex;
 
-  // 3D
-  const to = new THREE.Vector3(r / 255, g / 255, b / 255);
+  const to = new THREE.Vector3(r/255, g/255, b/255);
   setArrow(mainArrow, O, to);
   mainArrow.userData.mat.color.copy(col);
-  tipSphere.position.copy(to);
-  tipSphere.material.color.copy(col);
-  tipRing.position.copy(to);
-  tipRing.material.color.copy(col);
-  tipLabel.position.copy(to).multiplyScalar(1.06).add(new THREE.Vector3(0, 0.075, 0));
+  tipSphere.position.copy(to); tipSphere.material.color.copy(col);
+  tipRing.position.copy(to); tipRing.material.color.copy(col);
+  tipLabel.position.copy(to).multiplyScalar(1.06).add(new THREE.Vector3(0,0.075,0));
   tipLabel.userData.setText(`(${r}, ${g}, ${b})`);
 
-  const comps = [new THREE.Vector3(r / 255, 0, 0), new THREE.Vector3(0, g / 255, 0), new THREE.Vector3(0, 0, b / 255)];
-  compArrows.forEach((a, i) => setArrow(a, O, comps[i]));
+  [new THREE.Vector3(r/255,0,0), new THREE.Vector3(0,g/255,0), new THREE.Vector3(0,0,b/255)]
+    .forEach((p,i) => setArrow(compArrows[i], O, p));
 
-  // decomposition box
-  const [x, y, z] = [r / 255, g / 255, b / 255];
-  const pts = [];
-  for (let i = 0; i < 8; i++) pts.push(new THREE.Vector3((i & 1) ? x : 0, (i & 2) ? y : 0, (i & 4) ? z : 0));
-  const arr = boxGeom.attributes.position.array;
-  let o = 0;
-  BOX_EDGES.forEach(([a, c]) => {
-    arr[o++] = pts[a].x; arr[o++] = pts[a].y; arr[o++] = pts[a].z;
-    arr[o++] = pts[c].x; arr[o++] = pts[c].y; arr[o++] = pts[c].z;
-  });
-  boxGeom.attributes.position.needsUpdate = true;
-  boxLines.computeLineDistances();
+  const [x,y,z] = [r/255, g/255, b/255], pts = [];
+  for (let i=0;i<8;i++) pts.push(new THREE.Vector3(i&1?x:0, (i>>1)&1?y:0, (i>>2)&1?z:0));
+  const arr = boxGeom.attributes.position.array; let o = 0;
+  BOX_EDGES.forEach(([a,c]) => { arr[o++]=pts[a].x; arr[o++]=pts[a].y; arr[o++]=pts[a].z; arr[o++]=pts[c].x; arr[o++]=pts[c].y; arr[o++]=pts[c].z; });
+  boxGeom.attributes.position.needsUpdate = true; boxLines.computeLineDistances();
 
-  // luminance projection onto the gray diagonal
-  const m = (x + y + z) / 3;
-  const foot = new THREE.Vector3(m, m, m);
+  const m = (x+y+z)/3, foot = new THREE.Vector3(m,m,m);
   const cp = chromaLine.geometry.attributes.position.array;
-  cp[0] = foot.x; cp[1] = foot.y; cp[2] = foot.z;
-  cp[3] = x; cp[4] = y; cp[5] = z;
-  chromaLine.geometry.attributes.position.needsUpdate = true;
-  chromaLine.computeLineDistances();
+  cp[0]=foot.x; cp[1]=foot.y; cp[2]=foot.z; cp[3]=x; cp[4]=y; cp[5]=z;
+  chromaLine.geometry.attributes.position.needsUpdate = true; chromaLine.computeLineDistances();
   footSphere.position.copy(foot);
 
-  // metrics
-  const mag = Math.sqrt(r * r + g * g + b * b);
+  const mag = Math.sqrt(r*r+g*g+b*b);
   $('mMag').textContent = mag.toFixed(1);
-  $('mMagBar').style.width = (100 * mag / MAX).toFixed(1) + '%';
-  $('mUnit').textContent = mag < 1e-6 ? '—' : [r / mag, g / mag, b / mag].map(v => v.toFixed(2)).join(', ');
-  const [h, s, v] = rgbToHsv(r, g, b);
-  $('mHsv').textContent = `${h.toFixed(0)}°, ${(s * 100).toFixed(0)}%, ${(v * 100).toFixed(0)}%`;
-  const lum = (r + g + b) / 3;
-  const chroma = Math.sqrt(Math.pow(r - lum, 2) + Math.pow(g - lum, 2) + Math.pow(b - lum, 2));
-  $('mLum').textContent = `${lum.toFixed(0)} · ${chroma.toFixed(0)}`;
+  $('mMagBar').style.width = (100*mag/MAX).toFixed(1)+'%';
+  $('mUnit').textContent = mag < 1e-6 ? '—' : [r/mag,g/mag,b/mag].map(v=>v.toFixed(2)).join(', ');
+  const [h,s,v] = rgbToHsv(r,g,b);
+  $('mHsv').textContent = `${h.toFixed(0)}°, ${(s*100).toFixed(0)}%, ${(v*100).toFixed(0)}%`;
+  const lum = (r+g+b)/3;
+  const chr = Math.sqrt((r-lum)**2+(g-lum)**2+(b-lum)**2);
+  $('mLum').textContent = `${lum.toFixed(0)} · ${chr.toFixed(0)}`;
+
+  if (state.sliceLock && state.sliceAxis === 'lum' && state.show.slice) {
+    state.sliceT = THREE.MathUtils.clamp(m, 0.001, 0.999);
+    $('sliceSlider').value = Math.round(state.sliceT*1000);
+  }
+  updateSlice();
+  updateSum();
+  updateChallengeLive();
 }
 
 function renderList() {
-  const list = $('vList');
-  list.innerHTML = '';
+  const list = $('vList'); list.innerHTML = '';
   $('vCount').textContent = `(${state.vectors.length})`;
   $('vHint').classList.toggle('hidden', state.vectors.length === 0);
   state.vectors.forEach(v => {
-    const col = new THREE.Color(v.r / 255, v.g / 255, v.b / 255);
-    const hex = '#' + hex2(v.r) + hex2(v.g) + hex2(v.b);
-    const mag = Math.sqrt(v.r * v.r + v.g * v.g + v.b * v.b);
+    const col = new THREE.Color(v.r/255, v.g/255, v.b/255);
+    const hex = '#'+col.getHexString();
+    const mag = Math.sqrt(v.r*v.r+v.g*v.g+v.b*v.b);
     const sel = state.selected.includes(v.id);
     const row = document.createElement('div');
-    row.className = 'row' + (sel ? ' sel' : '');
-    row.innerHTML = `
-      <span class="swatch w-5 h-5 rounded-md shrink-0" style="background:${hex}"></span>
-      <span class="text-[11px] font-bold ${sel ? 'text-indigo-200' : 'text-slate-300'}">V${v.id}</span>
-      <span class="mono text-[10.5px] text-slate-400 flex-1">${v.r},${v.g},${v.b}</span>
-      <span class="mono text-[10px] text-slate-500">${mag.toFixed(0)}</span>
-      <button class="text-slate-500 hover:text-red-400 text-[13px] leading-none px-1" title="remove">×</button>`;
+    row.className = 'row'+(sel?' sel':'');
+    row.innerHTML = `<span class="swatch w-5 h-5 rounded-md shrink-0" style="background:${hex}"></span>
+      <span class="text-[11px] font-bold ${sel?'text-indigo-200':'text-slate-300'}">V${v.id}</span>
+      <span class="mono text-[10px] text-slate-400 flex-1">${v.r},${v.g},${v.b}</span>
+      <span class="mono text-[9.5px] text-slate-500">${mag.toFixed(0)}</span>
+      <button class="text-slate-500 hover:text-red-400 text-[14px] leading-none px-1">×</button>`;
     row.addEventListener('click', e => {
-      if (e.target.tagName === 'BUTTON') { removeVector(v.id); renderList(); updateCompare(); return; }
+      if (e.target.tagName === 'BUTTON') { removeVector(v.id); renderList(); updateSum(); updateCompare(); return; }
       const i = state.selected.indexOf(v.id);
-      if (i >= 0) state.selected.splice(i, 1);
-      else { state.selected.push(v.id); if (state.selected.length > 2) state.selected.shift(); }
-      renderList(); updateCompare();
+      if (i >= 0) state.selected.splice(i,1); else { state.selected.push(v.id); if (state.selected.length > 2) state.selected.shift(); }
+      renderList(); updateSum(); updateCompare();
     });
     list.appendChild(row);
   });
@@ -669,160 +755,334 @@ function renderList() {
 
 function updateCompare() {
   const panel = $('cmp');
-  if (state.selected.length < 2) {
-    panel.classList.add('hidden');
-    arcLine.visible = false; arcLabel.visible = false;
-    return;
-  }
+  if (state.selected.length < 2) { panel.classList.add('hidden'); arcLine.visible = arcLabel.visible = false; return; }
   const a = state.vectors.find(v => v.id === state.selected[0]);
   const b = state.vectors.find(v => v.id === state.selected[1]);
   if (!a || !b) return;
-  const va = new THREE.Vector3(a.r / 255, a.g / 255, a.b / 255);
-  const vb = new THREE.Vector3(b.r / 255, b.g / 255, b.b / 255);
+  const va = new THREE.Vector3(a.r/255,a.g/255,a.b/255), vb = new THREE.Vector3(b.r/255,b.g/255,b.b/255);
   const la = va.length(), lb = vb.length();
-  const cos = la && lb ? THREE.MathUtils.clamp(va.dot(vb) / (la * lb), -1, 1) : 0;
-  const ang = Math.acos(cos) * 180 / Math.PI;
+  const cos = la && lb ? THREE.MathUtils.clamp(va.dot(vb)/(la*lb), -1, 1) : 0;
+  const ang = Math.acos(cos)*180/Math.PI;
   panel.classList.remove('hidden');
-  $('cmpAngle').textContent = ang.toFixed(1) + '°';
+  $('cmpAngle').textContent = ang.toFixed(1)+'°';
   $('cmpDot').textContent = va.dot(vb).toFixed(2);
   $('cmpCos').textContent = cos.toFixed(3);
-  $('cmpDist').textContent = Math.round(Math.sqrt((a.r - b.r) ** 2 + (a.g - b.g) ** 2 + (a.b - b.b) ** 2) / Math.sqrt(3)).toFixed(0);
-  drawCompareCanvas(a, b, ang);
-
-  // 3D arc
-  const rad = Math.max(0.12, Math.min(0.45, Math.min(la, lb) * 0.8));
+  $('cmpDist').textContent = Math.round(Math.hypot(a.r-b.r,a.g-b.g,a.b-b.b));
+  drawCompare(a, b, ang);
+  const rad = THREE.MathUtils.clamp(Math.min(la,lb)*0.8, 0.14, 0.45);
   const pts = [];
-  for (let i = 0; i <= 48; i++) {
-    const p = new THREE.Vector3().copy(va).lerp(vb, i / 48);
+  for (let i=0;i<=48;i++) {
+    const p = va.clone().lerp(vb, i/48);
     if (p.lengthSq() < 1e-9) p.copy(va);
     pts.push(p.normalize().multiplyScalar(rad));
   }
-  arcLine.geometry.dispose();
-  arcLine.geometry = new THREE.BufferGeometry().setFromPoints(pts);
-  arcLine.visible = true;
-  arcLabel.visible = true;
-  const mid = pts[24].clone().multiplyScalar(1.16);
-  arcLabel.position.copy(mid);
-  arcLabel.userData.setText(ang.toFixed(1) + '°', '#fde68a');
+  arcLine.geometry.dispose(); arcLine.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+  arcLine.visible = arcLabel.visible = state.show.labels;
+  arcLabel.position.copy(pts[24]).multiplyScalar(1.18);
+  arcLabel.userData.setText(ang.toFixed(1)+'°', '#fde68a');
 }
 
-function drawCompareCanvas(a, b, ang) {
+function drawCompare(a, b, ang) {
   const cv = $('cmpCanvas'), ctx = cv.getContext('2d');
-  const W = cv.width, H = cv.height;
-  ctx.clearRect(0, 0, W, H);
-  const O = { x: 14, y: H - 12 };
-  const scale = 78;
-  const la = Math.hypot(a.r, a.g, a.b) / 255, lb = Math.hypot(b.r, b.g, b.b) / 255;
-  const ux = 1, uy = -1; // 2D stand-in basis (just for the sketch)
-  const ax = Math.min(1, la) * scale, bx = Math.min(1, lb) * scale;
-  const pa = { x: O.x + ax * Math.cos(0), y: O.y + ax * Math.sin(0) * -1 };
-  const pb = { x: O.x + bx * Math.cos(ang * Math.PI / 180) * ux, y: O.y - bx * Math.sin(ang * Math.PI / 180) };
+  const W = cv.width, H = cv.height; ctx.clearRect(0,0,W,H);
+  const O2 = { x: 12, y: H-11 }, sc = 68, rad = ang*Math.PI/180;
+  const la = Math.min(1, Math.hypot(a.r,a.g,a.b)/255)*sc, lb = Math.min(1, Math.hypot(b.r,b.g,b.b)/255)*sc;
+  const pa = { x: O2.x+la, y: O2.y }, pb = { x: O2.x+lb*Math.cos(rad), y: O2.y-lb*Math.sin(rad) };
   ctx.lineWidth = 4; ctx.lineCap = 'round';
-  ctx.strokeStyle = `rgb(${a.r},${a.g},${a.b})`;
-  ctx.beginPath(); ctx.moveTo(O.x, O.y); ctx.lineTo(pa.x, pa.y); ctx.stroke();
-  ctx.strokeStyle = `rgb(${b.r},${b.g},${b.b})`;
-  ctx.beginPath(); ctx.moveTo(O.x, O.y); ctx.lineTo(pb.x, pb.y); ctx.stroke();
-  ctx.strokeStyle = 'rgba(251,191,36,0.85)'; ctx.lineWidth = 2;
-  ctx.beginPath(); ctx.arc(O.x, O.y, Math.min(ax, bx) * 0.55, -ang * Math.PI / 180, 0); ctx.stroke();
+  ctx.strokeStyle = `rgb(${a.r},${a.g},${a.b})`; ctx.beginPath(); ctx.moveTo(O2.x,O2.y); ctx.lineTo(pa.x,pa.y); ctx.stroke();
+  ctx.strokeStyle = `rgb(${b.r},${b.g},${b.b})`; ctx.beginPath(); ctx.moveTo(O2.x,O2.y); ctx.lineTo(pb.x,pb.y); ctx.stroke();
+  ctx.strokeStyle = 'rgba(251,191,36,0.9)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(O2.x,O2.y, Math.min(la,lb)*0.5, -rad, 0); ctx.stroke();
   ctx.fillStyle = '#94a3b8'; ctx.font = '600 11px ui-sans-serif, system-ui, sans-serif';
-  ctx.fillText('V' + a.id, pa.x + 5, pa.y - 6);
-  ctx.fillText('V' + b.id, pb.x - 2, pb.y - 8);
+  ctx.fillText('V'+a.id, pa.x+3, pa.y+2); ctx.fillText('V'+b.id, pb.x-4, pb.y-7);
 }
 
-/* ---------------------------------------------------------------- events */
-function setRGB(r, g, b, from) {
-  state.r = Math.round(THREE.MathUtils.clamp(r, 0, 255));
-  state.g = Math.round(THREE.MathUtils.clamp(g, 0, 255));
-  state.b = Math.round(THREE.MathUtils.clamp(b, 0, 255));
-  updateActive();
+/* ---------------------------------------------------------- visibility */
+function applyVisibility() {
+  const s = state.show;
+  compArrows.forEach(a => a.visible = s.components);
+  boxLines.visible = s.components;
+  chromaLine.visible = footSphere.visible = grayLine.visible = s.gray;
+  grayLabel.visible = s.gray && s.labels;
+  corners.visible = s.corners;
+  axisLabels.forEach(l => l.visible = s.labels);
+  originLabel.visible = whiteLabel.visible = s.labels;
+  tipLabel.visible = s.labels;
+  savedGroup.children.forEach(g => g.children[2].visible = s.labels);
+  arcLine.visible = arcLabel.visible = s.labels && state.selected.length > 1;
+  controls.autoRotate = s.spin;
+  $('spinBtn').textContent = s.spin ? 'on' : 'off';
+  $('spinBtn').classList.toggle('on', s.spin);
+  $('cloudRow').style.display = s.cloud ? 'flex' : 'none';
+  updateSlice(); updateSum();
 }
-[[rS, 'r'], [gS, 'g'], [bS, 'b']].forEach(([el, k]) => {
-  el.addEventListener('input', () => { state[k] = +el.value; updateActive(); });
-});
-[[rN, 'r'], [gN, 'g'], [bN, 'b']].forEach(([el, k]) => {
-  el.addEventListener('input', () => { const v = +el.value; if (!isNaN(v)) { state[k] = Math.round(THREE.MathUtils.clamp(v, 0, 255)); updateActive(); } });
-});
-$('picker').addEventListener('input', e => {
-  const h = e.target.value;
-  setRGB(parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16));
-});
-document.querySelectorAll('.preset').forEach(p => p.addEventListener('click', () => {
-  const h = p.dataset.c;
-  setRGB(parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16));
-}));
-
-$('saveBtn').addEventListener('click', () => { addVector(state.r, state.g, state.b); renderList(); });
-$('randBtn').addEventListener('click', () => setRGB(Math.random() * 255, Math.random() * 255, Math.random() * 255));
-$('clearBtn').addEventListener('click', () => { [...state.vectors].forEach(v => removeVector(v.id)); state.selected = []; renderList(); updateCompare(); });
-$('resetBtn').addEventListener('click', () => {
-  camera.position.copy(HOME); controls.target.set(0.5, 0.5, 0.5); controls.update();
-});
-
 document.querySelectorAll('[data-t]').forEach(btn => {
   btn.addEventListener('click', () => {
     const k = btn.dataset.t;
     state.show[k] = !state.show[k];
     btn.classList.toggle('on', state.show[k]);
+    btn.textContent = k === 'slice' ? (state.show[k] ? 'hide' : 'show') : btn.textContent;
+    if (k === 'cloud') buildCloud(state.cloudN);
     applyVisibility();
   });
 });
-document.querySelectorAll('[data-n]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    state.cloudN = +btn.dataset.n;
-    document.querySelectorAll('[data-n]').forEach(o => o.classList.toggle('on', o === btn));
-    buildCloud(state.cloudN);
-  });
+document.querySelectorAll('[data-n]').forEach(btn => btn.addEventListener('click', () => {
+  state.cloudN = +btn.dataset.n;
+  document.querySelectorAll('[data-n]').forEach(o => o.classList.toggle('on', o === btn));
+  buildCloud(state.cloudN);
+}));
+document.querySelectorAll('[data-slice]').forEach(btn => btn.addEventListener('click', () => {
+  state.sliceAxis = btn.dataset.slice;
+  document.querySelectorAll('[data-slice]').forEach(o => o.classList.toggle('on', o === btn));
+  $('sliceLock').disabled = state.sliceAxis !== 'lum';
+  updateActive();
+}));
+$('sliceSlider').addEventListener('input', e => {
+  state.sliceT = +e.target.value / 1000;
+  if (state.sliceLock) { state.sliceLock = false; $('sliceLock').checked = false; }
+  updateSlice();
+});
+$('sliceLock').addEventListener('change', e => { state.sliceLock = e.target.checked; if (state.sliceLock) updateActive(); });
+
+/* ------------------------------------------------------------- inputs */
+[[rS,'r'],[gS,'g'],[bS,'b']].forEach(([el,k]) => el.addEventListener('input', () => { state[k] = +el.value; state.demo = null; updateActive(); }));
+[[rN,'r'],[gN,'g'],[bN,'b']].forEach(([el,k]) => el.addEventListener('input', () => {
+  const v = +el.value; if (!isNaN(v)) { state[k] = Math.round(THREE.MathUtils.clamp(v,0,255)); state.demo = null; updateActive(); }
+}));
+$('picker').addEventListener('input', e => {
+  const h = e.target.value; state.demo = null;
+  setRGB(parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16));
+});
+document.querySelectorAll('.preset').forEach(p => p.addEventListener('click', () => {
+  const h = p.dataset.c; state.demo = null;
+  setRGB(parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16));
+}));
+$('saveBtn').addEventListener('click', () => { addVector(state.r, state.g, state.b); renderList(); updateSum(); updateCompare(); });
+$('randBtn').addEventListener('click', () => { state.demo = null; setRGB(Math.random()*255, Math.random()*255, Math.random()*255); });
+$('clearBtn').addEventListener('click', () => { [...state.vectors].forEach(v => removeVector(v.id)); state.selected = []; renderList(); updateSum(); updateCompare(); });
+$('spinBtn').addEventListener('click', () => { state.show.spin = !state.show.spin; applyVisibility(); });
+
+/* ----------------------------------------------------------- mix demo */
+$('mixBtn').addEventListener('click', () => {
+  if (state.vectors.length < 2) { addVector(255,60,40); addVector(30,120,255); renderList(); }
+  state.selected = [state.vectors[0].id, state.vectors[1].id];
+  state.show.sum = true;
+  document.querySelector('[data-t="sum"]').classList.add('on');
+  state.demo = { type:'mix', k:0, a:state.vectors[0], b:state.vectors[1] };
+  renderList(); applyVisibility();
 });
 
-function applyVisibility() {
-  compArrows.forEach(a => a.visible = state.show.components);
-  boxLines.visible = state.show.components;
-  chromaLine.visible = state.show.gray;
-  footSphere.visible = state.show.gray;
-  grayLine.visible = state.show.gray;
-  grayLabel.visible = state.show.gray && state.show.labels;
-  corners.visible = state.show.corners;
-  axisLabels.forEach(l => l.visible = state.show.labels);
-  tipLabel.visible = state.show.labels;
-  savedGroup.children.forEach(g => g.children[2].visible = state.show.labels);
-  $('cloudRow').style.display = state.show.cloud ? 'flex' : 'none';
-  controls.autoRotate = state.show.spin;
+/* ------------------------------------------------------------ challenge */
+$('challengeBtn').addEventListener('click', () => {
+  const start = $('challengeBtn').textContent.trim() === 'start';
+  if (!start) { state.challenge = null; $('challengeBtn').textContent = 'start'; $('chUI').style.display = 'none'; return; }
+  newChallenge();
+});
+function newChallenge() {
+  const mode = Math.random();
+  let t;
+  if (mode < 0.45) { const [r,g,b] = hsvToRgb(Math.random()*360, 0.55+Math.random()*0.45, 0.6+Math.random()*0.4); t = [r,g,b]; }
+  else if (mode < 0.7) { const v = 40 + Math.random()*200; t = [v,v,v]; }
+  else t = [Math.random()*255, Math.random()*255, Math.random()*255];
+  state.challenge = { r:t[0], g:t[1], b:t[2], revealed:false };
+  $('challengeBtn').textContent = 'stop';
+  $('chUI').style.display = 'block';
+  $('chTarget').style.background = `rgb(${t[0]},${t[1]},${t[2]})`;
+  $('chResult').textContent = 'Hidden color set. Use the sliders to land the white vector on it.';
+  $('chResult').className = 'text-[11px] leading-snug rounded-lg px-2.5 py-1.5 bg-white/5 border border-white/10 text-slate-300';
+  $('chScore').textContent = '—';
+}
+$('chNew').addEventListener('click', newChallenge);
+$('chReveal').addEventListener('click', () => {
+  if (!state.challenge) return;
+  state.challenge.revealed = true;
+  const c = state.challenge;
+  $('chResult').innerHTML = `Target = <span class="mono text-slate-100">(${c.r}, ${c.g}, ${c.b})</span> — magnitude
+    <span class="mono">${Math.hypot(c.r,c.g,c.b).toFixed(0)}</span>, direction <span class="mono">${
+      [c.r,c.g,c.b].map(v=>(v/(Math.hypot(c.r,c.g,c.b)||1)).toFixed(2)).join(', ')}</span>`;
+});
+$('chCheck').addEventListener('click', () => {
+  if (!state.challenge) return;
+  const c = state.challenge, d = Math.hypot(c.r-state.r, c.g-state.g, c.b-state.b);
+  const score = Math.max(0, Math.round(100 * (1 - d/MAX)));
+  $('chScore').textContent = score + '%';
+  if (state.best === null || score > state.best) state.best = score;
+  $('chBest').textContent = state.best + '%';
+  const msg = score > 96 ? 'Perfect — same point in the cube!' :
+              score > 85 ? 'Very close. Tiny tweak on one channel.' :
+              score > 65 ? 'Right neighbourhood — nudge each channel.' :
+              score > 40 ? 'Some channels are off. Check which dashed edge is too short.' :
+                           'Far away. Try adjusting magnitude (length) first.';
+  const hue = score > 85 ? 'text-emerald-300 bg-emerald-400/10 border-emerald-400/30'
+            : score > 60 ? 'text-amber-200 bg-amber-400/10 border-amber-400/30'
+            : 'text-rose-200 bg-rose-400/10 border-rose-400/30';
+  $('chResult').className = `text-[11px] leading-snug rounded-lg px-2.5 py-1.5 border ${hue}`;
+  $('chResult').innerHTML = `${msg} <span class="mono">distance = ${d.toFixed(0)} / 441.7</span>`;
+});
+function updateChallengeLive() {
+  if (!state.challenge || !state.challenge.revealed) return;
+  $('chTarget').style.background = `rgb(${state.challenge.r},${state.challenge.g},${state.challenge.b})`;
 }
 
-const help = $('helpBody'), helpBtn = $('helpToggle'), caret = $('helpCaret');
-let helpOpen = true;
-helpBtn.addEventListener('click', () => {
-  helpOpen = !helpOpen;
-  help.style.maxHeight = helpOpen ? '260px' : '0px';
-  help.style.opacity = helpOpen ? '1' : '0';
-  help.style.paddingBottom = helpOpen ? '' : '0';
-  caret.textContent = helpOpen ? 'hide' : 'show';
-});
-help.style.maxHeight = '260px';
+/* --------------------------------------------------------------- lessons */
+const LESSONS = [
+  {
+    title: '1 · Every pixel is a vector',
+    text: 'A color is nothing more than three numbers. Stack them as a vector <b>R·x̂ + G·ŷ + B·ẑ</b> and draw it from the origin — pure black. The tip of the arrow <i>is</i> the color.',
+    hint: 'Drag the R, G, B sliders and watch the arrow stretch and swing inside the cube.',
+    cam: 'iso',
+    apply() { state.show.components = true; state.show.gray = true; state.show.sum = false; state.show.slice = false; state.show.cloud = false; }
+  },
+  {
+    title: '2 · Three perpendicular axes',
+    text: 'Red, green and blue are <b>orthogonal</b> — changing R never disturbs G or B. The dashed box shows the three component edges; the arrow is their <b>vector sum</b>.',
+    hint: 'Try R=255, G=0, B=0: the box collapses onto one axis and the arrow lies exactly along R.',
+    cam: 'r',
+    apply() { state.show.components = true; state.show.gray = false; state.show.cloud = false; }
+  },
+  {
+    title: '3 · Length = brightness',
+    text: 'Black has length 0. White = (255,255,255) has length √(3·255²) ≈ 441.7 — the cube\'s body diagonal. Every gray <b>R=G=B</b> sits on that diagonal.',
+    hint: 'Watch the vector slide along the gray axis: direction frozen, only magnitude changes.',
+    cam: 'iso',
+    apply() { state.show.gray = true; state.show.components = true; state.show.cloud = false; },
+    demo: { type:'gray' }
+  },
+  {
+    title: '4 · Direction = hue',
+    text: 'Hold the length fixed and sweep the <b>angle</b>: you get every hue at that brightness. Two colors with the same magnitude differ <i>only</i> by direction.',
+    hint: 'The tip orbits on a sphere while its distance to the gray axis (yellow dashed line) stays constant.',
+    cam: 'iso',
+    apply() { state.show.gray = true; state.show.components = false; state.show.cloud = false; },
+    demo: { type:'hue' }
+  },
+  {
+    title: '5 · Saturation = distance from gray',
+    text: 'Project your color onto the diagonal (the yellow dot). That projection is the <b>luminance</b>; the perpendicular distance is the <b>chroma</b>. Gray colors have chroma 0.',
+    hint: 'Enable the ⊥ Gray cross-section: slicing the cube perpendicular to gray gives the famous hue hexagon.',
+    cam: 'gray',
+    apply() { state.show.gray = true; state.show.slice = true; state.sliceAxis = 'lum'; state.show.components = false; }
+  },
+  {
+    title: '6 · Blending = vector addition',
+    text: 'Add two color vectors and you land on the opposite corner of the parallelogram. Screen-space blending instead walks the straight <b>line between the two tips</b> — the rainbow path shown here.',
+    hint: 'If a channel exceeds 255 it is clipped, so the sum can get pushed back onto the cube\'s surface.',
+    cam: 'iso',
+    apply() { state.show.sum = true; state.show.slice = false; state.show.components = true; }
+  },
+  {
+    title: '7 · Color difference = angle',
+    text: 'The <b>dot product</b> of two colors measures agreement: cos θ = (A·B)/(|A||B|). Orthogonal primaries sit at 90°; similar hues have small angles even when their brightnesses differ.',
+    hint: 'Click two saved vectors to see their angle, dot product and straight-line distance.',
+    cam: 'iso',
+    apply() { state.show.sum = false; state.show.components = true; }
+  },
+  {
+    title: '8 · The cube is every color',
+    text: 'All 16.7 million colors fill this cube as one point each. Anything a screen can show is a point — or a vector — inside it. Explore freely: spin it, slice it, add to it.',
+    hint: 'Turn on the color cloud and auto-spin, then try the practice challenge in the panel.',
+    cam: 'iso',
+    apply() { state.show.cloud = true; state.show.components = true; state.show.slice = true; state.show.spin = true; state.sliceAxis = 'lum'; }
+  }
+];
 
+function syncToggles() {
+  document.querySelectorAll('[data-t]').forEach(b => {
+    const k = b.dataset.t;
+    b.classList.toggle('on', !!state.show[k]);
+    if (k === 'slice') b.textContent = state.show[k] ? 'hide' : 'show';
+  });
+  document.querySelectorAll('[data-slice]').forEach(o => o.classList.toggle('on', o.dataset.slice === state.sliceAxis));
+  buildCloud(state.cloudN);
+  applyVisibility();
+}
+
+function showLesson(i) {
+  state.lesson = THREE.MathUtils.clamp(i, 0, LESSONS.length-1);
+  const L = LESSONS[state.lesson];
+  const body = $('lessonBody');
+  body.classList.remove('fade-in'); void body.offsetWidth; body.classList.add('fade-in');
+  $('lessonTitle').innerHTML = L.title;
+  $('lessonText').innerHTML = L.text;
+  $('lessonHint').innerHTML = '💡 ' + L.hint;
+  $('stepNum').textContent = `${state.lesson+1} / ${LESSONS.length}`;
+  $('prevBtn').style.opacity = state.lesson === 0 ? '0.4' : '1';
+  $('nextBtn').textContent = state.lesson === LESSONS.length-1 ? 'Restart ↺' : 'Next →';
+  document.querySelectorAll('#dots .dot').forEach((d, k) => d.classList.toggle('on', k === state.lesson));
+
+  L.apply();
+  state.demo = L.demo ? { ...L.demo } : null;
+  syncToggles();
+  setView(L.cam);
+  updateActive();
+}
+$('prevBtn').addEventListener('click', () => showLesson(state.lesson-1));
+$('nextBtn').addEventListener('click', () => showLesson(state.lesson === LESSONS.length-1 ? 0 : state.lesson+1));
+const dots = $('dots');
+LESSONS.forEach((_, i) => {
+  const d = document.createElement('div'); d.className = 'dot';
+  d.addEventListener('click', () => showLesson(i)); dots.appendChild(d);
+});
+let lessonOpen = true;
+$('lessonToggle').addEventListener('click', () => {
+  lessonOpen = !lessonOpen;
+  const b = $('lessonBody'), nav = dots.parentElement;
+  b.style.display = lessonOpen ? '' : 'none';
+  nav.parentElement.style.display = lessonOpen ? '' : 'none';
+  $('lessonToggle').textContent = lessonOpen ? 'hide' : 'show';
+});
+
+/* ------------------------------------------------------------------ keys */
 window.addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT') return;
-  if (e.key === 'r' || e.key === 'R') $('resetBtn').click();
-  if (e.key === 's' || e.key === 'S') $('saveBtn').click();
-  if (e.key === ' ') { e.preventDefault(); document.querySelector('[data-t="spin"]').click(); }
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  const k = e.key.toLowerCase();
+  if (k === 'r') setView('iso');
+  else if (k === 's') $('saveBtn').click();
+  else if (k === ' ') { e.preventDefault(); state.show.spin = !state.show.spin; applyVisibility(); }
+  else if (e.key === 'ArrowRight') showLesson(state.lesson+1);
+  else if (e.key === 'ArrowLeft') showLesson(state.lesson-1);
 });
 
 /* ------------------------------------------------------------------ loop */
+function easeInOut(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+const clock = new THREE.Clock();
+
 function animate() {
   requestAnimationFrame(animate);
+  const dt = Math.min(clock.getDelta(), 0.05), t = clock.elapsedTime;
+
+  if (camTween) {
+    camTween.k += dt / camTween.dur;
+    const e = easeInOut(Math.min(1, camTween.k));
+    camera.position.lerpVectors(camTween.p0, camTween.p1, e);
+    controls.target.lerpVectors(camTween.t0, camTween.t1, e);
+    if (camTween.k >= 1) camTween = null;
+  }
+
+  if (state.demo) {
+    if (state.demo.type === 'gray') {
+      const v = 128 + 122 * Math.sin(t * 1.15);
+      setRGB(v, v, v);
+    } else if (state.demo.type === 'hue') {
+      const [r,g,b] = hsvToRgb((t*46) % 360, 0.82, 0.86);
+      setRGB(r, g, b);
+    } else if (state.demo.type === 'mix') {
+      const s = (Math.sin(t*0.9)+1)/2;
+      const a = state.demo.a, b = state.demo.b;
+      setRGB(a.r + (b.r-a.r)*s, a.g + (b.g-a.g)*s, a.b + (b.b-a.b)*s);
+    }
+  }
+
   controls.update();
   renderer.render(scene, camera);
 }
 
 /* ------------------------------------------------------------------ init */
-updateActive();
-applyVisibility();
-renderList();
-updateCompare();
-// a couple of starting vectors to play with
-[[255, 0, 0], [255, 255, 0], [0, 90, 200]].forEach(c => addVector(...c));
+[[255,0,0],[255,255,0],[0,90,200]].forEach(c => addVector(...c));
 state.selected = [1, 2];
 renderList(); updateCompare();
+$('sliceLock').checked = true;
+showLesson(0);
 animate();
 </script>
     <div class="footer">
@@ -830,4 +1090,3 @@ animate();
     </div>
 </body>
 </html>
-
